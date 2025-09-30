@@ -34,10 +34,16 @@ If the tooling is reliable, the next step is to leverage CI machines and provide
 This project has a dummy gem with a "hello world" C extension in the `test/fixtures` folder.
 It's also possible to test on other gems with extensions locally, cd in the folder and run `easy_compile compile_and_test`
 
-It's also possible to manually trigger a CI run using the GitHub UI and choosing the project to be tested on.
+Smoke tests:
+
+This repo has two workflow that gets triggered manually through the GitHub UI:
+
+1. Run the tool on a selection of gems with native extensions https://github.com/rails/cool-stuff-fun-time/actions/workflows/gem-compile.yml
+2. Run the tool to run the whole compile/test/publish of a dummy gem https://github.com/rails/cool-stuff-fun-time/actions/workflows/dummy_gem-publish.yml
+   For this to work you need to update the gem's version, push on main and trigger the workflow manually. The resulting gem with binaries
+   are then published to https://rubygems.org/gems/edouard-dummy_gem
 
 <img width="366" height="301" alt="Image" src="https://github.com/user-attachments/assets/ed2a0917-7708-471a-9262-e1499ada7375" />
-
 
 --------------
 
