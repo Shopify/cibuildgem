@@ -2,6 +2,7 @@
 
 require "thor"
 require "bundler"
+require "fileutils"
 
 module EasyCompile
   class CLI < Thor
@@ -50,6 +51,33 @@ module EasyCompile
     method_option "os", type: :array, required: true, desc: "The operating systems you want to test your gem on."
     def ci_template
       directory(".github")
+    end
+
+    desc "release", "Release the gem with precompiled binaries"
+    def release
+      package
+      load("Rakefile") # TODO
+
+      ENV["GEM_COMMAND"] = "easy_compile"
+      ENV["gem_push"] = "no"
+
+      Rake::Task[:release].invoke # TODO This may be not defined
+
+      ENV.delete("GEM_COMMAND")
+      ENV.delete("gem_push")
+
+      Rake::Task["release:rubygem_push"].tap do |task|
+        task.reenable
+        task.invoke
+      end
+    end
+
+    desc "build", "Entrypoint for the Rake release command", hide: true
+    method_option "verbose", aliases: ["-V"]
+    def build
+      gem_path = Dir.glob("pkg/*.gem").first
+
+      FileUtils.mv(gem_path, Dir.pwd)
     end
 
     private
