@@ -19,7 +19,7 @@ runs:
       shell: bash
       run: "rake install"
       working-directory: "tmp"
-    - name: Install easy compile
+    - name: Run easy compile
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: easy_compile

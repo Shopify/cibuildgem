@@ -15,8 +15,8 @@ jobs:
         with:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
-          working-directory: "dummy_gem"
+          working-directory: "test/fixtures/dummy_gem"
       - name: "Run easy compile"
         uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
         with:
-          working-directory: "dummy_gem"
+          working-directory: "test/fixtures/dummy_gem"
