@@ -1,0 +1,27 @@
+name: Compile and test a dummy gem
+on: workflow_dispatch
+jobs:
+  compile_and_test:
+    permissions:
+      id-token: write
+      contents: write
+    name: "Complile and test the gem"
+    strategy:
+      matrix:
+        version: ["3.4.4"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "${{ matrix.version }}"
+          bundler-cache: true
+          working-directory: "test/fixtures/dummy_gem"
+      - name: "Run easy compile"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
+        with:
+          working-directory: "test/fixtures/dummy_gem"
+          release: true
