@@ -1,5 +1,15 @@
 name: Compile and test bootsnap
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: 'The repository to check out'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - "rails/bootsnap"
+
 jobs:
   easy-compile:
     strategy:
@@ -8,10 +18,10 @@ jobs:
         os: ["ubuntu-latest", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
-      - name: "Run easy compile on bootsnap"
+      - name: "Run easy compile on ${{ inputs.repository }}"
         uses: "actions/checkout@v5"
         with:
-          repository: "shopify/bootsnap"
+          repository: ${{ inputs.repository }}
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
