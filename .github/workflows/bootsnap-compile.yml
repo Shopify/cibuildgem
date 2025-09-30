@@ -9,13 +9,18 @@ on:
         type: choice
         options:
           - "rails/bootsnap"
+          - "ruby/debug"
+          - "ruby/racc"
+          - "ruby/json"
+          - "ruby/io-console"
+          - "sparklemotion/nokogiri"
 
 jobs:
   easy-compile:
     strategy:
       matrix:
         version: ["3.4.4"]
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest", "macos-latest", "macos-15-intel"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Run easy compile on ${{ inputs.repository }}"
