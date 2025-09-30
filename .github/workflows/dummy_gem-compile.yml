@@ -1,14 +1,18 @@
 name: Compile and test a dummy gem
 on: [push]
 jobs:
-  easy-compile:
+  compile_and_test:
+    permissions:
+      id-token: write
+      contents: write
+    name: "Complile and test the gem"
     strategy:
       matrix:
         version: ["3.4.4"]
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
-      - name: "Run easy compile on bootsnap"
+      - name: "Checkout code"
         uses: "actions/checkout@v5"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"

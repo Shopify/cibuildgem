@@ -6,6 +6,10 @@ inputs:
     description: "The working directory of the gem"
     default: "."
     required: false
+  release:
+    description: "Push and release the gem with precompiled binaries."
+    required: false
+    default: false
 
 runs:
   using: "composite"
@@ -23,3 +27,12 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: easy_compile
+    - name: "Release"
+      uses: Edouard-chin/release-gem@ec-working-dir
+      if: ${{ inputs.release == 'true' }}
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        setup-trusted-publisher: true
+        attestations: false
+      env:
+        RAKEOPT: "--require=${{ github.action_path }}/bundler_release.rb"
