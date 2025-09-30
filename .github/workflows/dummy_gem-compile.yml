@@ -1,0 +1,22 @@
+name: Compile and test a dummy gem
+on: [push]
+jobs:
+  easy-compile:
+    strategy:
+      matrix:
+        version: ["3.4.4"]
+        os: ["ubuntu-latest", "windows-latest"]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: "Run easy compile on bootsnap"
+        uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "${{ matrix.version }}"
+          bundler-cache: true
+          working-directory: "dummy_gem"
+      - name: "Run easy compile"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
+        with:
+          working-directory: "dummy_gem"

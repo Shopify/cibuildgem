@@ -1,0 +1,21 @@
+name: Compile and test bootsnap
+on: [workflow_dispatch]
+jobs:
+  easy-compile:
+    strategy:
+      matrix:
+        version: ["3.4.4"]
+        os: ["ubuntu-latest", "windows-latest"]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: "Run easy compile on bootsnap"
+        uses: "actions/checkout@v5"
+        with:
+          repository: "shopify/bootsnap"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "${{ matrix.version }}"
+          bundler-cache: true
+      - name: "Run easy compile"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"

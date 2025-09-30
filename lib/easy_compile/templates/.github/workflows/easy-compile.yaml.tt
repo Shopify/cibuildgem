@@ -1,0 +1,19 @@
+name: Compile and test a dummy gem
+on: [push]
+jobs:
+  easy-compile:
+    strategy:
+      matrix:
+        version: <%= options[:rubies] %>
+        os: <%= options[:os] %>
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: "Run easy compile"
+        uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "${{ matrix.version }}"
+          bundler-cache: true
+      - name: "Run easy compile"
+        uses: "shopify-playground/edouard-playground/easy_compile/.github/actions/easy_compile@main"

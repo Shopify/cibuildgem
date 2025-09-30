@@ -1,0 +1,25 @@
+name: 'Run compilation'
+description: 'An action to compile gems with native extensions and test the resulting binary.'
+
+inputs:
+  working-directory:
+    description: "The working directory of the gem"
+    default: "."
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout easy compile
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      with:
+        path: "tmp"
+        repository: "rails/cool-stuff-fun-time"
+    - name: Install easy compile
+      shell: bash
+      run: "rake install"
+      working-directory: "tmp"
+    - name: Install easy compile
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: easy_compile
