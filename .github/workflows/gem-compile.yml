@@ -1,4 +1,4 @@
-name: Compile and test bootsnap
+name: Compile and test a gem with native ext
 on:
   workflow_dispatch:
     inputs:
