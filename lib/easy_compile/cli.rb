@@ -54,30 +54,14 @@ module EasyCompile
     end
 
     desc "release", "Release the gem with precompiled binaries"
+    method_option "glob", type: :string, required: true, desc: "Release all the gems matching the glob"
     def release
-      package
-      load("Rakefile") # TODO
+      Dir.glob(options[:glob]).each do |file|
+        pathname = Pathname(file)
+        next if pathname.directory? || pathname.extname != ".gem"
 
-      ENV["GEM_COMMAND"] = "easy_compile"
-      ENV["gem_push"] = "no"
-
-      Rake::Task[:release].invoke # TODO This may be not defined
-
-      ENV.delete("GEM_COMMAND")
-      ENV.delete("gem_push")
-
-      Rake::Task["release:rubygem_push"].tap do |task|
-        task.reenable
-        task.invoke
+        system("gem push #{file}", exception: true)
       end
-    end
-
-    desc "build", "Entrypoint for the Rake release command", hide: true
-    method_option "verbose", aliases: ["-V"]
-    def build
-      gem_path = Dir.glob("pkg/*.gem").first
-
-      FileUtils.mv(gem_path, Dir.pwd)
     end
 
     private

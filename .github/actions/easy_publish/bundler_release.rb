@@ -3,7 +3,7 @@
 require 'bundler'
 
 Bundler.with_clean_env do
-  system("easy_compile release")
+  system('easy_compile release --glob "pkg/*"', exception: true)
 
-  exit(0) # TODO Exit status
+  exit(0)
 end

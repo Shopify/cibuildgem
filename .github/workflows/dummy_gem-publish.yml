@@ -25,3 +25,24 @@ jobs:
         with:
           working-directory: "test/fixtures/dummy_gem"
           release: true
+
+  release:
+    permissions:
+      id-token: write
+      contents: write
+    needs: compile_and_test
+    name: "Release gems"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.4.4"
+          bundler-cache: true
+          working-directory: "test/fixtures/dummy_gem"
+      - name: "Release"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@ec-release-in-bulk"
+        with:
+          working-directory: "test/fixtures/dummy_gem"
