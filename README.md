@@ -18,9 +18,9 @@ If the tooling is reliable, the next step is to leverage CI machines and provide
 1. Developer make a change on a branch, the GitHub action kicks in and spin up windows, macos or ubuntu machines, compile the gem and test that it works.
 2. The change gets merged on main.
 3. The gem maintainer wants to cut a release. He/she nagivates on the GitHub UI and manually run a workflow that this tool has setup.
-  - The tool compile the gem and test it on various platforms. If all test passes, the action proceeds.
-  - The tool package the gem.
-  - The tool publish the gem with the provided user's credentials (That can be configured as a secret on GitHub)
+    - The tool compile the gem and test it on various platforms. If all test passes, the action proceeds.
+    - The tool package the gem.
+    - The tool publish the gem with the provided user's credentials (That can be configured as a secret on GitHub)
 
 #### Current features
 
