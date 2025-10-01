@@ -19,18 +19,15 @@ runs:
       shell: bash
       run: "rake install"
       working-directory: "tmp"
-    - name: Run easy compile
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: easy_compile
-    - name: Package
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: easy_compile package
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
-        name: "package-${{ runner.os }}-${{ runner.arch }}"
-        path: "${{ inputs.working-directory }}/pkg/*.gem"
-        if-no-files-found: error
-        overwrite: true
+        path: "${{ inputs.working-directory }}/pkg"
+        merge-multiple: true
+    - name: "Release"
+      uses: Edouard-chin/release-gem@ec-working-dir
+      with:
+        working-directory: ${{ inputs.working-directory }}
+        setup-trusted-publisher: true
+        attestations: false
+      env:
+        RAKEOPT: "--require=${{ github.action_path }}/bundler_release.rb"
