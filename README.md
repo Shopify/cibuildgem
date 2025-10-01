@@ -69,3 +69,4 @@ For reference, this are all the gems with native extensions that a new Rails app
 | mysql2  | ✅   | |
 | prism  | ✅   | |
 | msgpack  | ⚠️ | Compilation works but the gem doesn't provide a default Rake test command |
+| nokogiri | 🔴 | Nokogiri ships with precompiled binaries already, but it would be great it this tool works with it. I think Nokogiri is really the final boss and if that tool works on it we can call it a job done. |
