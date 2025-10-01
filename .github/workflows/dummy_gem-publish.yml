@@ -43,6 +43,6 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
       - name: "Release"
-        uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@ec-release-in-bulk"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@main"
         with:
           working-directory: "test/fixtures/dummy_gem"
