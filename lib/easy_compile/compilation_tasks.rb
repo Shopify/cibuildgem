@@ -58,6 +58,7 @@ module EasyCompile
         ext.ext_dir = File.dirname(path)
         ext.lib_dir = binary_lib_dir if binary_lib_dir
         ext.gem_spec = gemspec
+        ext.platform = strip_darwin_versioning(ext) if darwin?
       end
 
       disable_shared if darwin? && shared_enabled?
@@ -89,6 +90,14 @@ module EasyCompile
 
         File.write(makefile_task.name, makefile_content)
       end
+    end
+
+    def strip_darwin_versioning(ext)
+      platform = ext.platform.sub(/(-darwin)\d+/, '\1')
+      Rake::Task.define_task(native: "native:#{platform}")
+      Rake::Task.define_task(compile: "native:#{platform}")
+
+      platform
     end
   end
 end
