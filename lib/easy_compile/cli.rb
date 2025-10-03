@@ -26,7 +26,7 @@ module EasyCompile
 
     desc "package", "Package the gem and its extension"
     def package
-      setup_tasks(options[:gemspec], true)
+      setup_tasks(options[:gemspec])
       Rake::Task[:native].invoke
 
       Rake::Task[:gem].invoke
@@ -66,10 +66,16 @@ module EasyCompile
 
     private
 
-    def setup_tasks(gemspec, native = false)
-      tasks = CompilationTasks.new(gemspec, native)
+    def setup_tasks(gemspec)
+      load_rakefile
+      tasks = CompilationTasks.new(gemspec, !Rake::Task.task_defined?(:package))
 
       tasks.setup
+    end
+
+    def load_rakefile
+      load("Rakefile")
+    rescue LoadError
     end
   end
 end
