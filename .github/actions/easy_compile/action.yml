@@ -34,3 +34,4 @@ runs:
         path: "${{ inputs.working-directory }}/pkg/*.gem"
         if-no-files-found: error
         overwrite: true
+        retention-days: 1
