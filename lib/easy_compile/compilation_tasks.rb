@@ -2,6 +2,7 @@
 
 require "bundler"
 require "rubygems/gemspec_helpers"
+require "rubygems/package_task"
 require "rake/extensiontask"
 
 module EasyCompile
@@ -11,9 +12,10 @@ module EasyCompile
     attr_reader :gemspec, :native
     attr_accessor :binary_name
 
-    def initialize(gemspec = nil, native = false)
+    def initialize(gemspec, create_packaging_task)
       @gemspec  = Bundler.load_gemspec(gemspec || find_gemspec)
-      @native = native
+
+      setup_packaging if create_packaging_task
     end
 
     def setup
@@ -25,6 +27,13 @@ module EasyCompile
     end
 
     private
+
+    def setup_packaging
+      Gem::PackageTask.new(gemspec) do |pkg|
+        pkg.need_zip = true
+        pkg.need_tar = true
+      end
+    end
 
     def with_mkmf_monkey_patch
       require "mkmf"
@@ -48,7 +57,7 @@ module EasyCompile
         ext.config_script = File.basename(path)
         ext.ext_dir = File.dirname(path)
         ext.lib_dir = binary_lib_dir if binary_lib_dir
-        ext.gem_spec = @gemspec if native
+        ext.gem_spec = gemspec
       end
 
       disable_shared if darwin? && shared_enabled?
