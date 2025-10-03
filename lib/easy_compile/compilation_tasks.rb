@@ -58,7 +58,8 @@ module EasyCompile
         ext.ext_dir = File.dirname(path)
         ext.lib_dir = binary_lib_dir if binary_lib_dir
         ext.gem_spec = gemspec
-        ext.platform = strip_darwin_versioning(ext) if darwin?
+        ext.cross_platform = RUBY_PLATFORM
+        ext.cross_compile = true
       end
 
       disable_shared if darwin? && shared_enabled?
@@ -82,22 +83,16 @@ module EasyCompile
     end
 
     def disable_shared
-      makefile_task = Rake::Task.tasks.find { |task| task.name =~ /Makefile/ }
+      makefile_tasks = Rake::Task.tasks.select { |task| task.name =~ /Makefile/ }
 
-      makefile_task.enhance do
-        makefile_content = File.read(makefile_task.name)
-        makefile_content.sub!(/(LIBRUBYARG_SHARED = )(?:-l\$\(RUBY_SO_NAME\))(.*)/, '\1\2')
+      makefile_tasks.each do |task|
+        task.enhance do
+          makefile_content = File.read(task.name)
+          makefile_content.sub!(/(LIBRUBYARG_SHARED = )(?:-l\$\(RUBY_SO_NAME\))(.*)/, '\1\2')
 
-        File.write(makefile_task.name, makefile_content)
+          File.write(task.name, makefile_content)
+        end
       end
-    end
-
-    def strip_darwin_versioning(ext)
-      platform = ext.platform.sub(/(-darwin)\d+/, '\1')
-      Rake::Task.define_task(native: "native:#{platform}")
-      Rake::Task.define_task(compile: "native:#{platform}")
-
-      platform
     end
   end
 end

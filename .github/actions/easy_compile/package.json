@@ -1,0 +1,22 @@
+{
+  "name": "easy_compile",
+  "version": "1.0.0",
+  "description": "A companion GitHub action for easy_compile.",
+  "main": "index.js",
+  "repository": "https://github.com/rails/cool-stuff-fun-time",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
+    "package": "ncc build src/index.js -o dist; mv dist/index.js dist/entrypoint.js"
+  },
+  "author": "Edouard Chin",
+  "license": "MIT",
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4",
+    "jest": "^30.2.0"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1",
+    "@actions/tool-cache": "^2.0.2"
+  }
+}
