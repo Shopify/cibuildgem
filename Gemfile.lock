@@ -9,6 +9,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     date (3.4.1)
+    debug (1.11.0)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     erb (5.0.2)
     io-console (0.8.1)
     irb (1.15.2)
@@ -38,6 +41,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  debug
   easy_compile!
   irb
   minitest (~> 5.16)
