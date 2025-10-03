@@ -50,6 +50,8 @@ module EasyCompile
         ext.lib_dir = binary_lib_dir if binary_lib_dir
         ext.gem_spec = @gemspec if native
       end
+
+      disable_shared if darwin? && shared_enabled?
     ensure
       self.binary_name = nil
     end
@@ -59,6 +61,25 @@ module EasyCompile
       return if dir == "."
 
       gemspec.raw_require_paths.first + "/#{dir}"
+    end
+
+    def darwin?
+      Gem::Platform.local.os == "darwin"
+    end
+
+    def shared_enabled?
+      RbConfig::CONFIG["ENABLE_SHARED"] == "yes"
+    end
+
+    def disable_shared
+      makefile_task = Rake::Task.tasks.find { |task| task.name =~ /Makefile/ }
+
+      makefile_task.enhance do
+        makefile_content = File.read(makefile_task.name)
+        makefile_content.sub!(/(LIBRUBYARG_SHARED = )(?:-l\$\(RUBY_SO_NAME\))(.*)/, '\1\2')
+
+        File.write(makefile_task.name, makefile_content)
+      end
     end
   end
 end
