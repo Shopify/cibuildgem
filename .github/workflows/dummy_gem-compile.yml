@@ -18,6 +18,6 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
       - name: "Run easy compile"
-        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@ec-multiple-rubies"
+        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
         with:
           working-directory: "test/fixtures/dummy_gem"
