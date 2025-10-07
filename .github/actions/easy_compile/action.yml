@@ -27,7 +27,7 @@ runs:
       uses: actions/github-script@v8
       with:
         script: |
-          const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/entrypoint.js`);
+          const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/index.js`);
           const { run } = await import(url.href)
           await run()
     - name: Package gems with precompiled binaries
