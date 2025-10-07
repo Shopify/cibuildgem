@@ -1,5 +1,4 @@
 const core = require('@actions/core');
-const setupRuby = require('./setup-ruby');
 const fs = require('node:fs');
 const cp = require('node:child_process');
 const process = require('node:process');

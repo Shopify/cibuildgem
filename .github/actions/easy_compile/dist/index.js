@@ -28200,7 +28200,6 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(7484);
-const setupRuby = __nccwpck_require__(3448);
 const fs = __nccwpck_require__(3024);
 const cp = __nccwpck_require__(1421);
 const process = __nccwpck_require__(1708);
@@ -28281,14 +28280,6 @@ function windowsInstallerURL(rubyVersion) {
 }
 
 module.exports = { run }
-
-
-/***/ }),
-
-/***/ 3448:
-/***/ ((module) => {
-
-module.exports = eval("require")("./setup-ruby");
 
 
 /***/ }),
