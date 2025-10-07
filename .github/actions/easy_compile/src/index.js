@@ -4,12 +4,11 @@ const fs = require('node:fs');
 const cp = require('node:child_process');
 const process = require('node:process');
 const tc = require('@actions/tool-cache');
-const github = require('@actions/github');
 const os = require('os');
 const path = require('path');
 
 async function run() {
-  let rubies = ["3.3.7", "3.4.6"]; // TODO infer this. Similar to rake-compiler-dock with `set_ruby_cc_version`
+  let rubies = ["3.3.9", "3.4.6"]; // TODO infer this. Similar to rake-compiler-dock with `set_ruby_cc_version`
 
   await downloadRubies(rubies)
   setupRakeCompilerConfig()
@@ -21,7 +20,7 @@ async function downloadRubies(rubies) {
     let tarball = await tc.downloadTool(downloadUrl);
 
     if (isWindows()) {
-      await tc.extract7z(tarball);
+      await tc.extract7z(tarball, `rubies/${version}`, '7z');
     } else {
       await tc.extractTar(tarball, `rubies/${version}`);
     }
@@ -31,25 +30,24 @@ async function downloadRubies(rubies) {
 function setupRakeCompilerConfig() {
   let rubiesRbConfig = fs.globSync(`${process.cwd()}/rubies/*/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
+  let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
 
   fs.mkdirSync(`${os.homedir()}/.rake-compiler`)
 
   rubiesRbConfig.forEach((path) => {
-    let rubyVersion = path.match(/rubies\/(\d\.\d\.\d)/)[1]
+    let rubyVersion = path.match(/rubies.(\d\.\d\.\d)/)[1]
     let rbConfigName = getRbConfigName(rubyVersion)
 
     if (rubyVersion != currentRubyVersion) {
-      fs.writeFileSync(`${os.homedir()}/.rake-compiler/config.yml`, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
+      fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
     }
   })
-
-  let rakeCompilerConfig = fs.readFileSync(`${os.homedir()}/.rake-compiler/config.yml`, { encoding: 'utf-8' });
 }
 
 function getRbConfigName(rubyVersion) {
   let rubyPlatform = cp.execSync('ruby -e "print RUBY_PLATFORM"', { encoding: 'utf-8' })
 
-  return `rbconfig-${rubyPlatform}-${rubyVersion}` // TODO hardcoded
+  return `rbconfig-${rubyPlatform}-${rubyVersion}`
 }
 
 function isWindows() {
