@@ -28231,12 +28231,13 @@ function setupRakeCompilerConfig() {
   let rubiesRbConfig = fs.globSync(`${process.cwd()}/rubies/*/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
   let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
+  let rubyPlatform = withoutDarwinVersioning(cp.execSync('ruby -e "print RUBY_PLATFORM"', { encoding: 'utf-8' }))
 
   fs.mkdirSync(`${os.homedir()}/.rake-compiler`)
 
   rubiesRbConfig.forEach((path) => {
     let rubyVersion = path.match(/rubies.(\d\.\d\.\d)/)[1]
-    let rbConfigName = getRbConfigName(rubyVersion)
+    let rbConfigName = getRbConfigName(rubyPlatform, rubyVersion)
 
     if (rubyVersion != currentRubyVersion) {
       fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
@@ -28244,10 +28245,20 @@ function setupRakeCompilerConfig() {
   })
 }
 
-function getRbConfigName(rubyVersion) {
-  let rubyPlatform = cp.execSync('ruby -e "print RUBY_PLATFORM"', { encoding: 'utf-8' })
+function withoutDarwinVersioning(platform) {
+  if (!isDarwin()) {
+    return platform
+  }
 
+  return platform.replace(/(.*-darwin)\d+/, '$1')
+}
+
+function getRbConfigName(rubyPlatform, rubyVersion) {
   return `rbconfig-${rubyPlatform}-${rubyVersion}`
+}
+
+function isDarwin() {
+  return os.platform() == "darwin";
 }
 
 function isWindows() {

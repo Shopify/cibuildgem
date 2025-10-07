@@ -19,7 +19,7 @@ module EasyCompile
     desc "compile_and_test", "Compile a gem's native extension based on its gemspec and run the test suite."
     def compile_and_test
       setup_tasks(options[:gemspec])
-      Rake::Task["compile"].invoke
+      Rake::Task[:compile].invoke
 
       system "bundle exec rake test"
     end
@@ -27,6 +27,7 @@ module EasyCompile
     desc "package", "Package the gem and its extension"
     def package
       setup_tasks(options[:gemspec])
+      Rake::Task[:cross].invoke
       Rake::Task[:native].invoke
 
       Rake::Task[:gem].invoke

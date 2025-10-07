@@ -58,7 +58,7 @@ module EasyCompile
         ext.ext_dir = File.dirname(path)
         ext.lib_dir = binary_lib_dir if binary_lib_dir
         ext.gem_spec = gemspec
-        ext.cross_platform = RUBY_PLATFORM
+        ext.cross_platform = platform_without_darwin_version
         ext.cross_compile = true
       end
 
@@ -93,6 +93,13 @@ module EasyCompile
           File.write(task.name, makefile_content)
         end
       end
+    end
+
+    def platform_without_darwin_version
+      platform = RUBY_PLATFORM
+      return platform unless darwin?
+
+      RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
     end
   end
 end
