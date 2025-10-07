@@ -33,7 +33,7 @@ runs:
     - name: Package gems with precompiled binaries
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: easy_compile package
+      run: easy_compile clobber && easy_compile package
       env:
         RUBY_CC_VERSION: "3.3.9:3.4.6" # TODO hardcoded
     - name: Upload artifacts
