@@ -26,6 +26,16 @@ module EasyCompile
       end
     end
 
+    def ruby_cc_version
+      required_ruby_version = @gemspec.required_ruby_version
+
+      selected_rubies = cross_rubies.select do |ruby_version|
+        required_ruby_version.satisfied_by?(ruby_version)
+      end
+
+      selected_rubies.map(&:to_s).join(":")
+    end
+
     private
 
     def setup_packaging
@@ -100,6 +110,16 @@ module EasyCompile
       return platform unless darwin?
 
       RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
+    end
+
+    def cross_rubies
+      [
+        "3.4.6",
+        "3.3.9",
+        "3.2.9",
+        "3.1.7",
+        "3.0.7",
+      ].map { |version| Gem::Version.new(version) }
     end
   end
 end

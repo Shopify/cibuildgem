@@ -28207,10 +28207,10 @@ const tc = __nccwpck_require__(3472);
 const os = __nccwpck_require__(857);
 const path = __nccwpck_require__(6928);
 
-async function run() {
-  let rubies = ["3.3.9", "3.4.6"]; // TODO infer this. Similar to rake-compiler-dock with `set_ruby_cc_version`
+async function run(workingDirectory) {
+  let ccRubies = cp.execSync('easy_compile print_ruby_cc_version', { cwd: workingDirectory, encoding: 'utf-8' })
 
-  await downloadRubies(rubies)
+  await downloadRubies(ccRubies.split(':'))
   setupRakeCompilerConfig()
 }
 
