@@ -3,6 +3,7 @@
 require "thor"
 require "bundler"
 require "fileutils"
+require "debug"
 
 module EasyCompile
   class CLI < Thor

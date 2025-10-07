@@ -2,7 +2,13 @@
 
 require_relative "dummy_gem/version"
 
-require "hello_world"
+begin
+  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+
+  require "#{ruby_version}/hello_world"
+rescue LoadError
+  require "hello_world"
+end
 
 module DummyGem
   class Error < StandardError; end
