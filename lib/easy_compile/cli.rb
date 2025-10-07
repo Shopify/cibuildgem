@@ -19,7 +19,7 @@ module EasyCompile
 
     desc "compile_and_test", "Compile a gem's native extension based on its gemspec and run the test suite."
     def compile_and_test
-      setup_tasks(options[:gemspec])
+      setup_tasks
       Rake::Task[:compile].invoke
 
       system "bundle exec rake test"
@@ -27,7 +27,9 @@ module EasyCompile
 
     desc "package", "Package the gem and its extension"
     def package
-      setup_tasks(options[:gemspec])
+      ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
+      setup_tasks
+
       Rake::Task[:cross].invoke
       Rake::Task[:native].invoke
 
@@ -36,14 +38,14 @@ module EasyCompile
 
     desc "clean", "Cleanup compilation artifacts."
     def clean
-      setup_tasks(options[:gemspec])
+      setup_tasks
 
       Rake::Task["clean"].invoke
     end
 
     desc "clobber", "Clobber compilation artifacts and binaries."
     def clobber
-      setup_tasks(options[:gemspec])
+      setup_tasks
 
       Rake::Task["clobber"].invoke
     end
@@ -66,13 +68,21 @@ module EasyCompile
       end
     end
 
+    desc "print_ruby_cc_version", "Output the cross compile ruby version needed for the gem."
+    def print_ruby_cc_version
+      print compilation_task.ruby_cc_version
+    end
+
     private
 
-    def setup_tasks(gemspec)
+    def setup_tasks
       load_rakefile
-      tasks = CompilationTasks.new(gemspec, !Rake::Task.task_defined?(:package))
 
-      tasks.setup
+      compilation_task.setup
+    end
+
+    def compilation_task
+      @compilation_task ||= CompilationTasks.new(options[:gemspec], !Rake::Task.task_defined?(:package))
     end
 
     def load_rakefile
