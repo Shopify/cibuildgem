@@ -9,7 +9,7 @@ extask = Rake::ExtensionTask.new("date") do |ext|
 end
 
 Rake::TestTask.new(:test) do |t|
-  # t.libs << extask.lib_dir
+  t.libs << extask.lib_dir
   t.libs << "test/lib"
   t.ruby_opts << "-rhelper"
   t.test_files = FileList['test/**/test_*.rb']
