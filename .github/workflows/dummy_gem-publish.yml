@@ -1,4 +1,4 @@
-name: Compile, test and publish a dummy_gem
+name: Compile, test and publish a vendored date gem
 on: workflow_dispatch
 jobs:
   compile_and_test:
@@ -19,11 +19,11 @@ jobs:
         with:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
-          working-directory: "test/fixtures/dummy_gem"
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
         with:
-          working-directory: "test/fixtures/dummy_gem"
+          working-directory: "test/fixtures/date"
           release: true
 
   release:
@@ -41,8 +41,8 @@ jobs:
         with:
           ruby-version: "3.4.4"
           bundler-cache: true
-          working-directory: "test/fixtures/dummy_gem"
+          working-directory: "test/fixtures/date"
       - name: "Release"
         uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@main"
         with:
-          working-directory: "test/fixtures/dummy_gem"
+          working-directory: "test/fixtures/date"
