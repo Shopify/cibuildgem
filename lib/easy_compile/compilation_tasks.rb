@@ -113,13 +113,14 @@ module EasyCompile
     end
 
     def cross_rubies
-      [
+     versions = [
         "3.4.6",
         "3.3.9",
         "3.2.9",
-        "3.1.7",
-        "3.0.7",
-      ].map { |version| Gem::Version.new(version) }
+      ]
+     versions.push("3.1.7", "3.0.7") unless Gem.win_platform? # GCC 15 incompatibility on Ruby 3.1 and 3.0 for windows.
+
+     versions.map { |version| Gem::Version.new(version) }
     end
   end
 end
