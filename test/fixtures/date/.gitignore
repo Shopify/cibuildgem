@@ -1,0 +1,10 @@
+/.bundle/
+/Gemfile.lock
+/coverage/
+/pkg/
+*.bundle
+*.dll
+*.lib
+*.so
+*.[ao]
+/tmp
