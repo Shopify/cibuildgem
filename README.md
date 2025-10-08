@@ -39,9 +39,8 @@ Smoke tests:
 This repo has two workflow that gets triggered manually through the GitHub UI:
 
 1. Run the tool on a selection of gems with native extensions https://github.com/rails/cool-stuff-fun-time/actions/workflows/gem-compile.yml
-2. Run the tool to run the whole compile/test/publish of a dummy gem https://github.com/rails/cool-stuff-fun-time/actions/workflows/dummy_gem-publish.yml
-   For this to work you need to update the gem's version, push on main and trigger the workflow manually. The resulting gem with binaries
-   are then published to https://rubygems.org/gems/edouard-dummy_gem
+2. Run the tool to run the whole compile/test/publish of the real 'date' gem to https://rubygems.org/gems/edouard-dummy_date
+   For this to work you need to update the gem's version, push on main and trigger the workflow manually.
 
 <img width="366" height="301" alt="Image" src="https://github.com/user-attachments/assets/ed2a0917-7708-471a-9262-e1499ada7375" />
 
@@ -49,7 +48,7 @@ This repo has two workflow that gets triggered manually through the GitHub UI:
 
 For reference, this are all the gems with native extensions that a new Rails application depends on
 
-| Gem name  | The tool works on it | Why it fails |
+| Gem name  | The tool can compile and test it | Why it fails |
 | ------------- | ------------- | ------------- |
 | Bindex  | ✅   | Works but need to run `easy_compile --gemspec bindex.gemspec` because the gem has two gemspec at its root |
 | websocket-driver  | ⚠️  | Compilation works but the gem doesn't provide a default Rake test command |
