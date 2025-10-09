@@ -1,10 +1,14 @@
-name: Compile, test and publish a vendored date gem
-on: workflow_dispatch
+name: Compile, test and publish a gem
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: 'The repository to check out'
+        required: true
+        type: string
+
 jobs:
   compile_and_test:
-    permissions:
-      id-token: write
-      contents: write
     name: "Complile and test the gem"
     strategy:
       matrix:
@@ -14,17 +18,15 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
+        with:
+          repository: {{ inputs.repository }}
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
-          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
-        with:
-          working-directory: "test/fixtures/date"
-          release: true
 
   release:
     permissions:
@@ -36,13 +38,12 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
+        with:
+          repository: ${{ inputs.repository }}
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.4"
           bundler-cache: true
-          working-directory: "test/fixtures/date"
       - name: "Release"
         uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@main"
-        with:
-          working-directory: "test/fixtures/date"
