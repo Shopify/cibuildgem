@@ -26,7 +26,7 @@ jobs:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
 
   release:
     permissions:
