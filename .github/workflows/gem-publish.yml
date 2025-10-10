@@ -20,6 +20,15 @@ jobs:
         uses: "actions/checkout@v5"
         with:
           repository: "${{ inputs.repository }}"
+      - name: "Install external dependencies"
+        run: "sudo apt-get -qy --no-install-recommends install ragel"
+        if: runner.os == 'Linux'
+      - name: "Install external dependencies for Linux"
+        run: "sudo apt-get -qy update && sudo apt-get -qy --no-install-recommends install ragel"
+        if: runner.os == 'Linux' # Required for puma
+      - name: "Install external dependencies for MacOS"
+        run: "brew update && brew install ragel"
+        if: runner.os == 'macOS' # Required for puma
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
