@@ -46,4 +46,4 @@ jobs:
           ruby-version: "3.4.4"
           bundler-cache: true
       - name: "Release"
-        uses: "./.github/actions/easy_publish"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
