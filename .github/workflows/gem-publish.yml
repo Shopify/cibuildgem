@@ -1,4 +1,4 @@
-name: Compile, test and publish a gem
+name: "Compile, test and publish a gem."
 on:
   workflow_dispatch:
     inputs:
@@ -19,7 +19,7 @@ jobs:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
         with:
-          repository: {{ inputs.repository }}
+          repository: "${{ inputs.repository }}"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
@@ -39,7 +39,7 @@ jobs:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
         with:
-          repository: ${{ inputs.repository }}
+          repository: "${{ inputs.repository }}"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:

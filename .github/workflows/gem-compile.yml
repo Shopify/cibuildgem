@@ -1,4 +1,4 @@
-name: Compile and test the date gem
+name: "Compile and test the date gem"
 on: [push]
 jobs:
   compile_and_test:
