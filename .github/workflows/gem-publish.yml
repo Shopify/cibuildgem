@@ -26,7 +26,7 @@ jobs:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
       - name: "Run easy compile"
-        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
+        uses: "./.github/actions/easy_compile"
 
   release:
     permissions:
@@ -46,4 +46,4 @@ jobs:
           ruby-version: "3.4.4"
           bundler-cache: true
       - name: "Release"
-        uses: "rails/cool-stuff-fun-time/.github/actions/easy_publish@main"
+        uses: "./.github/actions/easy_publish"
