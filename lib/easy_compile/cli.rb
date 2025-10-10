@@ -86,6 +86,7 @@ module EasyCompile
 
     def load_rakefile
       load("Rakefile")
+      Bundler.unbundle_env!
     rescue LoadError
     end
   end
