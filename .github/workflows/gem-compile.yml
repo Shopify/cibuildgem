@@ -1,36 +1,23 @@
-name: Compile and test a gem with native ext
-on:
-  workflow_dispatch:
-    inputs:
-      repository:
-        description: 'The repository to check out'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-          - "rails/bootsnap"
-          - "ruby/debug"
-          - "ruby/racc"
-          - "ruby/json"
-          - "ruby/io-console"
-          - "sparklemotion/nokogiri"
-
+name: Compile and test the date gem
+on: [push]
 jobs:
-  easy-compile:
+  compile_and_test:
+    name: "Complile and test the date gem"
     strategy:
       matrix:
         version: ["3.4.4"]
-        os: ["ubuntu-latest", "windows-latest", "macos-latest", "macos-15-intel"]
+        os: ["windows-latest", "macos-latest", "ubuntu-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
-      - name: "Run easy compile on ${{ inputs.repository }}"
+      - name: "Checkout code"
         uses: "actions/checkout@v5"
-        with:
-          repository: ${{ inputs.repository }}
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "${{ matrix.version }}"
           bundler-cache: true
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "rails/cool-stuff-fun-time/.github/actions/easy_compile@main"
+        uses: "./.github/actions/easy_compile"
+        with:
+          working-directory: "test/fixtures/date"
