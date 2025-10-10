@@ -114,7 +114,6 @@ module EasyCompile
 
     def cross_rubies
      versions = [
-        "3.4.6",
         "3.3.9",
         "3.2.9",
       ]
