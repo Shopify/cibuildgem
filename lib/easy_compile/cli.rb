@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require "thor"
-require "bundler"
-require "fileutils"
+require "rake/extensiontask"
 
 module EasyCompile
   class CLI < Thor
@@ -18,35 +17,24 @@ module EasyCompile
 
     desc "compile_and_test", "Compile a gem's native extension based on its gemspec and run the test suite."
     def compile_and_test
-      setup_tasks
-      Rake::Task[:compile].invoke
-
-      system "bundle exec rake test"
+      run_rake_tasks!(:compile)
     end
 
     desc "package", "Package the gem and its extension"
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
-      setup_tasks
 
-      Rake::Task[:cross].invoke
-      Rake::Task[:native].invoke
-
-      Rake::Task[:gem].invoke
+      run_rake_tasks!(:cross, :native, :gem)
     end
 
     desc "clean", "Cleanup compilation artifacts."
     def clean
-      setup_tasks
-
-      Rake::Task["clean"].invoke
+      run_rake_tasks!(:clean)
     end
 
     desc "clobber", "Clobber compilation artifacts and binaries."
     def clobber
-      setup_tasks
-
-      Rake::Task["clobber"].invoke
+      run_rake_tasks!(:clobber)
     end
 
     desc "ci_template", "Generate CI template files"
@@ -74,19 +62,16 @@ module EasyCompile
 
     private
 
-    def setup_tasks
-      load_rakefile
+    def run_rake_tasks!(*tasks)
+      all_tasks = tasks.join(" ")
+      rakelibdir = File.expand_path("tasks", __dir__)
+      load_paths = Gem.loaded_specs["rake-compiler"].full_require_paths.join(":")
 
-      compilation_task.setup
+      system("bundle exec rake #{all_tasks} -I#{load_paths} -R#{rakelibdir}", exception: true)
     end
 
     def compilation_task
-      @compilation_task ||= CompilationTasks.new(options[:gemspec], !Rake::Task.task_defined?(:package))
-    end
-
-    def load_rakefile
-      load("Rakefile")
-    rescue LoadError
+      @compilation_task ||= CompilationTasks.new(false, options[:gemspec])
     end
   end
 end
