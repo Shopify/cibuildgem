@@ -28246,7 +28246,8 @@ function setupRakeCompilerConfig() {
 }
 
 function rubiesPath() {
-  return path.join(process.env['RUNNER_TEMP'], 'rubies');
+  return 'rubies';
+  // return path.join(process.env['RUNNER_TEMP'], 'rubies');
 }
 
 function withoutDarwinVersioning(platform) {
