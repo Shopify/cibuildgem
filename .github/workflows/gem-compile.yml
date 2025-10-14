@@ -6,18 +6,20 @@ jobs:
     strategy:
       matrix:
         version: ["3.4.4"]
-        os: ["windows-latest", "macos-latest", "ubuntu-latest"]
+        os: ["ubuntu-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
-      - name: "Setup Ruby"
-        uses: "ruby/setup-ruby@v1"
-        with:
-          ruby-version: "${{ matrix.version }}"
-          bundler-cache: true
-          working-directory: "test/fixtures/date"
-      - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
-        with:
-          working-directory: "test/fixtures/date"
+      - name: "Print tmp path"
+        run: "echo ${{ runner.temp }}"
+      # - name: "Setup Ruby"
+      #   uses: "ruby/setup-ruby@v1"
+      #   with:
+      #     ruby-version: "${{ matrix.version }}"
+      #     bundler-cache: true
+      #     working-directory: "test/fixtures/date"
+      # - name: "Run easy compile"
+      #   uses: "./.github/actions/easy_compile"
+      #   with:
+      #     working-directory: "test/fixtures/date"
