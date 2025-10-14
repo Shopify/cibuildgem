@@ -15,19 +15,19 @@ async function run(workingDirectory) {
 
 async function downloadRubies(rubies) {
   for (const version of rubies) {
-    let downloadUrl = getDownloadURL(version)
+    let downloadUrl = getDownloadURL(version);
     let tarball = await tc.downloadTool(downloadUrl);
 
     if (isWindows()) {
-      await tc.extract7z(tarball, `rubies/${version}`, '7z');
+      await tc.extract7z(tarball, `${rubiesPath()}/${version}`, '7z');
     } else {
-      await tc.extractTar(tarball, `rubies/${version}`);
+      await tc.extractTar(tarball, `${rubiesPath()}/${version}`);
     }
   }
 }
 
 function setupRakeCompilerConfig() {
-  let rubiesRbConfig = fs.globSync(`${process.cwd()}/rubies/*/*/lib/ruby/*/*/rbconfig.rb`)
+  let rubiesRbConfig = fs.globSync(`${rubiesPath()}/*/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
   let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
   let rubyPlatform = withoutDarwinVersioning(cp.execSync('ruby -e "print RUBY_PLATFORM"', { encoding: 'utf-8' }))
@@ -42,6 +42,10 @@ function setupRakeCompilerConfig() {
       fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
     }
   })
+}
+
+function rubiesPath() {
+  return path.join(process.env['RUNNER_TEMP'], 'rubies');
 }
 
 function withoutDarwinVersioning(platform) {

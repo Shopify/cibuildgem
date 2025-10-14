@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 # date.rb: Written by Tadayoshi Funaba 1998-2011
 
-ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
-require "#{ruby_version}/date_core"
+begin
+  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+  require "#{ruby_version}/date_core"
+rescue LoadError
+  require "date_core"
+end
 
 class Date
   VERSION = "3.4.1" # :nodoc:

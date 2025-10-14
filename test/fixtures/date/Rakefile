@@ -2,6 +2,9 @@ require "bundler/gem_tasks"
 require "rake/testtask"
 require "shellwords"
 require "rake/extensiontask"
+require "rake/clean"
+
+CLEAN.include("**/*.o", "**/*.so", "**/*.bundle", "*.jar", "pkg", "tmp")
 
 extask = Rake::ExtensionTask.new("date") do |ext|
   ext.name = "date_core"
