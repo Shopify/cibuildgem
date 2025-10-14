@@ -30,15 +30,15 @@ runs:
           const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/index.js`);
           const { run } = await import(url.href)
           await run('${{ inputs.working-directory }}')
-    - name: Package gems with precompiled binaries
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: easy_compile clobber && easy_compile package
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: "package-${{ runner.os }}-${{ runner.arch }}"
-        path: "${{ inputs.working-directory }}/pkg/*.gem"
-        if-no-files-found: error
-        overwrite: true
-        retention-days: 1
+    # - name: Package gems with precompiled binaries
+    #   working-directory: ${{ inputs.working-directory }}
+    #   shell: bash
+    #   run: easy_compile clobber && easy_compile package
+    # - name: Upload artifacts
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: "package-${{ runner.os }}-${{ runner.arch }}"
+    #     path: "${{ inputs.working-directory }}/pkg/*.gem"
+    #     if-no-files-found: error
+    #     overwrite: true
+    #     retention-days: 1

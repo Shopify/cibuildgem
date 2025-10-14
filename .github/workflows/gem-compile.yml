@@ -11,15 +11,13 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
-      - name: "Print tmp path"
-        run: "echo ${{ runner.temp }}"
-      # - name: "Setup Ruby"
-      #   uses: "ruby/setup-ruby@v1"
-      #   with:
-      #     ruby-version: "${{ matrix.version }}"
-      #     bundler-cache: true
-      #     working-directory: "test/fixtures/date"
-      # - name: "Run easy compile"
-      #   uses: "./.github/actions/easy_compile"
-      #   with:
-      #     working-directory: "test/fixtures/date"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "${{ matrix.version }}"
+          bundler-cache: true
+          working-directory: "test/fixtures/date"
+      - name: "Run easy compile"
+        uses: "./.github/actions/easy_compile"
+        with:
+          working-directory: "test/fixtures/date"
