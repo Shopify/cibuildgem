@@ -28243,9 +28243,6 @@ function setupRakeCompilerConfig() {
       fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
     }
   })
-
-  let content = fs.readFileSync(rbConfigPath, { encoding: 'utf-8' });
-  console.log(content);
 }
 
 function rubiesPath() {
