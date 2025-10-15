@@ -6,39 +6,76 @@ inputs:
     description: "The working directory of the gem"
     default: "."
     required: false
+  step:
+    description: "The step to run"
+    required: true
+  token:
+    description: "Not important" # TODO Remove this. I only need that for testing purposes
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout easy compile
+    - name: Checkout easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       with:
         path: "tmp"
         repository: "shopify-playground/edouard-playground"
-    - name: Install easy compile
+    - name: Install easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       shell: bash
       run: "rake install"
       working-directory: "tmp"
-    - name: Compile and test
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: easy_compile
     - name: "Setup Rake Compiler"
+      if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
       with:
         script: |
           const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/index.js`);
           const { run } = await import(url.href)
           await run('${{ inputs.working-directory }}')
-    - name: Package gems with precompiled binaries
+    - name: Package
+      if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: easy_compile clobber && easy_compile package
+      run: easy_compile package
     - name: Upload artifacts
+      if: "${{ inputs.step == 'compile' }}"
       uses: actions/upload-artifact@v4
       with:
-        name: "package-${{ runner.os }}-${{ runner.arch }}"
-        path: "${{ inputs.working-directory }}/pkg/*.gem"
+        name: "stage-${{ runner.os }}-${{ runner.arch }}"
+        path: |
+          ${{ inputs.working-directory }}/tmp/**/*.so
+          ${{ inputs.working-directory }}/tmp/**/*.bundle
+          ${{ inputs.working-directory }}/pkg/*.gem
         if-no-files-found: error
-        overwrite: true
         retention-days: 1
+    - name: "Download compiled binaries"
+      if: "${{ inputs.step == 'test_cross' }}"
+      uses: actions/download-artifact@v5
+      with:
+        name: "stage-${{ runner.os }}-${{ runner.arch }}"
+        path: "${{ inputs.working-directory }}"
+    - name: "Copy staging binary to the libdir"
+      if: "${{ inputs.step == 'test_cross' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: easy_compile copy_from_staging_to_lib
+    - name: "Compile native"
+      if: "${{ inputs.step == 'test_native' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: easy_compile compile
+    - name: "Execute the tests"
+      if: "${{ startsWith(inputs.step, 'test') }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: bundle exec rake test # TODO This should be configurable
+    - name: "Download gems"
+      if: "${{ inputs.step == 'install' }}"
+      uses: actions/download-artifact@v5
+      with:
+        name: "stage-${{ runner.os }}-${{ runner.arch }}"
+    - name: "Install gems"
+      if: "${{ inputs.step == 'install' }}"
+      shell: bash
+      run: gem install pkg/*.gem

@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
 require "bundler"
-require "rubygems/gemspec_helpers"
 require "rubygems/package_task"
 require "rake/extensiontask"
 
 module EasyCompile
   class CompilationTasks
-    include Gem::GemspecHelpers
-
-    attr_reader :gemspec, :native, :create_packaging_task
+    attr_reader :gemspec, :native, :create_packaging_task, :extension_task
     attr_accessor :binary_name
 
     def initialize(create_packaging_task = false, gemspec = nil)
@@ -64,7 +61,7 @@ module EasyCompile
     def define_task(path)
       require File.expand_path(path)
 
-      Rake::ExtensionTask.new do |ext|
+      @extension_task = Rake::ExtensionTask.new do |ext|
         ext.name = File.basename(binary_name)
         ext.config_script = File.basename(path)
         ext.ext_dir = File.dirname(path)
@@ -123,6 +120,10 @@ module EasyCompile
      versions.push("3.1.7", "3.0.7") unless Gem.win_platform? # GCC 15 incompatibility on Ruby 3.1 and 3.0 for windows.
 
      versions.map { |version| Gem::Version.new(version) }
+    end
+
+    def find_gemspec(glob = "*.gemspec")
+      Dir.glob(glob).sort.first
     end
   end
 end
