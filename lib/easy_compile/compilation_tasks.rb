@@ -9,13 +9,13 @@ module EasyCompile
   class CompilationTasks
     include Gem::GemspecHelpers
 
-    attr_reader :gemspec, :native
+    attr_reader :gemspec, :native, :create_packaging_task
     attr_accessor :binary_name
 
-    def initialize(gemspec, create_packaging_task)
+    def initialize(create_packaging_task = false, gemspec = nil)
       @gemspec  = Bundler.load_gemspec(gemspec || find_gemspec)
 
-      setup_packaging if create_packaging_task
+      @create_packaging_task = create_packaging_task
     end
 
     def setup
@@ -24,6 +24,8 @@ module EasyCompile
           define_task(path)
         end
       end
+
+      setup_packaging if create_packaging_task
     end
 
     def ruby_cc_version
