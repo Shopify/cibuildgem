@@ -74,16 +74,10 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "<%= latest_supported_ruby_version %>"
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "install"
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
   release:
     permissions:
       id-token: write
