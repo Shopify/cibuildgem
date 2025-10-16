@@ -1,12 +1,20 @@
-name: "Compile and test the date gem"
-on: [push]
+name: "Package gems with precompiled binaries"
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "If the whole build passes on all platforms, release the gems on RubyGems.org"
+        required: false
+        type: boolean
+        default: false
+  push: # Custom
 jobs:
   compile:
-    timeout-minutes: 10 # TODO This should be configurable
+    timeout-minutes: 20
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
@@ -14,25 +22,22 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "3.4.7" # TODO This should be determined dynamically.
+          ruby-version: "3.4.7"
           bundler-cache: true
-          working-directory: "test/fixtures/date"
+          working-directory: "test/fixtures/date" # EXTRA
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
-          working-directory: "test/fixtures/date"
           step: "compile"
+          working-directory: "test/fixtures/date" # EXTRA
   test:
-    permissions: # TODO This can be removed. I just need this temporarily to download the artifact from a previous workflow
-      actions: read
-      contents: read
-    timeout-minutes: 10 # TODO This should be configurable
+    timeout-minutes: 20
     name: "Run the test suite"
     needs: compile
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        rubies: ["3.0.7", "3.1.7", "3.2.9", "3.3.9", "3.4.6"] # TODO This should be determined dynamically.
+        os: ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
+        rubies: ["3.0.7", "3.1.7", "3.2.9", "3.3.9", "3.4.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
     steps:
@@ -43,55 +48,47 @@ jobs:
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
-          working-directory: "test/fixtures/date"
+          working-directory: "test/fixtures/date" # EXTRA
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
-          working-directory: "test/fixtures/date"
           step: "test_${{ matrix.type }}"
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO This can be removed. Only for testing
+          working-directory: "test/fixtures/date" # EXTRA
   install:
-    permissions: # TODO This can be removed. I just need this temporarily to download the artifact from a previous workflow
-      actions: read
-      contents: read
     timeout-minutes: 5
     name: "Verify the gem can be installed"
     needs: test
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
-      - name: "Checkout code" # TODO No need to checkout the codebase. Have to do it here because the relative path to the action doesn't work otherwise.
-        uses: "actions/checkout@v5"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "3.4.7" # TODO This needs to be determined dynamically.
+          ruby-version: "3.4.7"
+          working-directory: "test/fixtures/date" # EXTRA
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "install"
+          working-directory: "test/fixtures/date" # EXTRA
   release:
-    permissions: # TODO This can be removed. I just need this temporarily to download the artifact from a previous workflow
-      actions: read
-      contents: read
+    permissions:
       id-token: write
     timeout-minutes: 5
+    if: ${{ inputs.release }}
     name: "Release all gems with RubyGems"
     needs: install
     runs-on: "ubuntu-latest"
     steps:
-      - name: "Checkout code" # TODO No need to checkout the codebase. Have to do it here because the relative path to the action doesn't work otherwise.
-        uses: "actions/checkout@v5"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
           bundler-cache: true
-          working-directory: "test/fixtures/date"
+          working-directory: "test/fixtures/date" # EXTRA
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_publish"
-        with:
-          working-directory: "test/fixtures/date"
-          token: "${{ secrets.GITHUB_TOKEN }}"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@easy-compile"
+        with: # EXTRA
+          working-directory: "test/fixtures/date" # EXTRA
