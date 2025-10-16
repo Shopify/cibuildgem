@@ -71,7 +71,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "install"
-          working-directory: "test/fixtures/date"
   release:
     permissions:
       id-token: write
