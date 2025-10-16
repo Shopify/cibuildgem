@@ -1,71 +1,84 @@
-# EasyCompile
+> [!NOTE]
+> **This tool is currently in active development.** The base functionalities work but we are working on adding more feature and polishing the overall experience.
 
-#### Summary
+## 🗒️ Preambule
 
-We'd like to improve the speed of `bundle install` as well as fixing a common source of failure for gems that have a native extension.
+#### The problem this tool tries to solve.
 
-A way to solve this problem is helping maintainers shipping their gems with precompiled binaries with the right tooling. We want to take inspiration from the Python community and [cibuildhweel](https://github.com/pypa/cibuildwheel).
+A major bottleneck for every Ruby developers when running `bundle install` is the compilation of native gem extensions. To illustrate this issue, running `bundle install` on a new Rails application takes around **25 seconds** on a MacBook Pro M4, and 80% of that time is spent compiling the couple dozens of gems having native extensions. It would take only 5 seconds if it wasn't for the compilation.
+
+#### How we can solve this problem for the Ruby community.
+
+The Python community had exactly the same issue and came up with the amazing [cibuildwheel](https://github.com/pypa/cibuildwheel) solution to provide a CI based compilation approach to help maintainers ship their libraries will precompiled binaries for various platforms.
+
+This tool modestly tries to follow the same approach by helping ruby maintainers ship their gems with precompiled binaries.
+
+#### Existing solutions.
+
+Precompilation isn't new in the Ruby ecosystem and some maintainers have been releasing their gems with precompiled binaries to speedup the installation process since a while (e.g. [nokogiri](https://rubygems.org/gems/nokogiri), [grpc](https://rubygems.org/gems/grpc), [karafka-rdkafka](https://rubygems.org/gems/karafka-rdkafka)). One of the most popular tool that enables to precompile binaries for different platform is the great [rake-compiler-dock](https://github.com/rake-compiler/rake-compiler-dock) toolchain.
+It uses a cross compilation approach by periodically building docker images for various platforms and spinning up containers to compile the binaries.
+
+As noted by @flavorjoes, this toolchain works great but it's complex and brittle compared to the more simple process of compiling on the target platform.
+
+## 💻 Easy Compile
+
+> [!NOTE]
+> Easy Compile is for now not able to compile projects that needs to link on external libraries. Unless the project vendors those libraries or uses [mini_portile](https://github.com/flavorjones/mini_portile).
+
+### How to use it
+
+While Easy Compile is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
+
+1. Install Easy Compile: `gem install easy_compile`
+2. Generate the workflow: `cd` in your gem's folder and run `easy_compile ci_template`
+3. Commit the `.github/gem-compile.yaml` file.
+
+### Triggering the workflow
+
+Once pushed in your repository **default** branch, the workflow that we just generated is actionable manually on the GitHub action page. It will run in sequence:
+
+1. Compile the gem on the target platform (defaults to MacOS ARM, MacOS Intel, Windows, Ubuntu 24)
+2. Once the compilation succeeds on all platform, it proceeds to run the test suite on the target platform. This will trigger many CI steps as the testing matrix is big.
+3. Once the test suite passes for all platforms and all Ruby versions the gem is compatible with, the action proceeds to installing the gem we just packaged. This step ensure that the gem is actually installable.
+4. [OPTIONAL] When trigering the workflow manually, you can tick the box to automatically release the gems that were packaged. This works using the RubyGems trusted publisher feature (documentation to write later). If you do no want the tool to make the release, you can download all the GitHub artifacts that were uploaded. It will contain all the gems with precompiled binaries in the `pkg` folder. You are free to download them locally and release them yourself from your machine.
 
 
-#### How does it work and what I have in mind
+### Changes to make in your gem to support precompiled binaries
 
-It's still a prototype at this point, but the idea is to piggyback on top of the existing great tooling such as `rake-compiler`. It provides a CLI that's able to compile a gem's extension by setting up the rake-compiler tasks itself and infer the right configuration based on the gem's gemspec.
+Due to the RubyGems specification, we can't release a gem with precompiled binaries for a specific Ruby version. Because the Ruby ABI is incompatible between minor versions, Rake Compiler (the tool underneath Easy Compile), compiles the binary for every minor Ruby versions your gem supports. All those binaries will be packaged in the gem (called a fat gem) in different folder such as `3.0/date.so`, `3.1/date.so` etc...
+At runtime, your gem need to require the right binary based on the running ruby version.
 
-Ultimately what I have in mind is to let developers write gems with extensions and run a single command `easy_compile compile test` to compile the gem and run its test suite without having to write boilerplate code.
+```ruby
+# Before
 
-If the tooling is reliable, the next step is to leverage CI machines and provide GitHub action templates and provide native compilation. The whole workflow would look something like:
+require 'date_core.so'
 
-1. Developer make a change on a branch, the GitHub action kicks in and spin up windows, macos or ubuntu machines, compile the gem and test that it works.
-2. The change gets merged on main.
-3. The gem maintainer wants to cut a release. He/she nagivates on the GitHub UI and manually run a workflow that this tool has setup.
-    - The tool compile the gem and test it on various platforms. If all test passes, the action proceeds.
-    - The tool package the gem.
-    - The tool publish the gem with the provided user's credentials (That can be configured as a secret on GitHub)
+# After
 
-#### Current features
+begin
+  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+  require "#{ruby_version}/date_core"
+rescue LoadError
+  # It's important to leave for users that can not or don't want to use the gem with precompiled binaries.
+  require "date_core"
+end
+```
 
-- `easy_compile compile_and_test` -> Compile the gem extension and run the test suite
-- `easy_compile clobber` -> Clobber the gem's compilation artifacts and binaries
-- `easy_compile ci_template --rubies 3.4.4 --os macos-latest` -> Generate GitHub CI templates for running this tool on CI
+### Supported platforms/Ruby versions
+
+|         | MacOS Intel  | MacOS ARM | Windows x64 | Linux GNU x86_64|Linux AARCH64 |
+|---------|------------- | --------- | ------------|-----------------|-----------------|
+| Ruby 3.0| 🟢           | 🟢        | 🔴[^1]      | 🟢             | 🟠 (Not tested) |
+| Ruby 3.1| 🟢           | 🟢        | 🔴[^1]      | 🟢             | 🟠 (Not tested) |
+| Ruby 3.2| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
+| Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
+| Ruby 3.4| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
+
+[^1]: MSYS2 incompatibility with GCC 15.1. (See https://bugs.ruby-lang.org/issues/21286). This can be fixed by downgrading the GCC version. We'll work on this later.
 
 
-#### Testing
+## 🧪 Development
 
-This project has a dummy gem with a "hello world" C extension in the `test/fixtures` folder.
-It's also possible to test on other gems with extensions locally, cd in the folder and run `easy_compile compile_and_test`
+If you'd like to run a end-to-end test, the `date` gem is vendored in this project. You can trigger a manual run to do the whole compile, test, install dance from the GitHub action menu.
 
-Smoke tests:
-
-This repo has two workflow that gets triggered manually through the GitHub UI:
-
-1. Run the tool on a selection of gems with native extensions https://github.com/rails/cool-stuff-fun-time/actions/workflows/gem-compile.yml
-2. Run the tool to run the whole compile/test/publish of the real 'date' gem to https://rubygems.org/gems/edouard-dummy_date
-   For this to work you need to update the gem's version, push on main and trigger the workflow manually.
-
-<img width="366" height="301" alt="Image" src="https://github.com/user-attachments/assets/ed2a0917-7708-471a-9262-e1499ada7375" />
-
---------------
-
-For reference, this are all the gems with native extensions that a new Rails application depends on
-
-| Gem name  | The tool can compile and test it | Why it fails |
-| ------------- | ------------- | ------------- |
-| Bindex  | ✅   | Works but need to run `easy_compile --gemspec bindex.gemspec` because the gem has two gemspec at its root |
-| websocket-driver  | ⚠️  | Compilation works but the gem doesn't provide a default Rake test command |
-| racc  | ✅   | |
-| debug  | ✅   | |
-| erb  | ✅   | |
-| bcrypt_pbkdf  | ✅   | |
-| bootsnap  | ✅   | |
-| psych  | ✅   | |
-| ed25519  | ⚠️ | Compilation works but the gem doesn't provide a default Rake test command |
-| nio4r  | ⚠️ | Compilation works but the gem doesn't provide a default Rake test command |
-| io-console  | ✅   | |
-| puma  | ✅   | |
-| json  | ✅   | |
-| date  | ✅   | |
-| bigdecimal  | ✅   | |
-| mysql2  | ✅   | |
-| prism  | ✅   | |
-| msgpack  | ⚠️ | Compilation works but the gem doesn't provide a default Rake test command |
-| nokogiri | 🔴 | Nokogiri ships with precompiled binaries already, but it would be great it this tool works with it. I think Nokogiri is really the final boss and if that tool works on it we can call it a job done. |
+<img width="1350" height="225" alt="Image" src="https://github.com/user-attachments/assets/e34946d8-aff2-4aac-92c0-108f1d5beda0" />
