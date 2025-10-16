@@ -9,7 +9,6 @@ module EasyCompile
 
     source_root(File.expand_path("templates", __dir__))
     default_command :compile_and_test
-    class_option :gemspec, type: :string, required: false, desc: "The gemspec of the gem. Defaults to the one from the root of the project."
 
     def self.exit_on_failure?
       true
@@ -21,6 +20,7 @@ module EasyCompile
     end
 
     desc "package", "Package the gem and its extension"
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
 
@@ -43,6 +43,8 @@ module EasyCompile
     end
 
     desc "ci_template", "Generate CI template files"
+    method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specifiy where."
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def ci_template
       os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
       ruby_requirements = compilation_task.gemspec.required_ruby_version
@@ -64,6 +66,7 @@ module EasyCompile
     end
 
     desc "print_ruby_cc_version", "Output the cross compile ruby version needed for the gem."
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def print_ruby_cc_version
       print compilation_task.ruby_cc_version
     end

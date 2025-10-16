@@ -23,10 +23,16 @@ jobs:
         with:
           ruby-version: "<%= latest_supported_ruby_version %>"
           bundler-cache: true
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "compile"
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
   test:
     timeout-minutes: 20
     name: "Run the test suite"
@@ -45,10 +51,16 @@ jobs:
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "test_${{ matrix.type }}"
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
@@ -62,10 +74,16 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "<%= latest_supported_ruby_version %>"
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "install"
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
   release:
     permissions:
       id-token: write
@@ -80,5 +98,12 @@ jobs:
         with:
           ruby-version: "3.4.7"
           bundler-cache: true
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@easy-compile"
+        <%- if options['working-directory'] -%>
+        with:
+          working-directory: "<%= options['working-directory'] %>"
+        <%- end -%>

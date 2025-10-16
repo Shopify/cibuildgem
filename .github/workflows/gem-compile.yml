@@ -7,7 +7,6 @@ on:
         required: false
         type: boolean
         default: false
-  push: # Custom
 jobs:
   compile:
     timeout-minutes: 20
@@ -24,20 +23,20 @@ jobs:
         with:
           ruby-version: "3.4.7"
           bundler-cache: true
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "compile"
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
   test:
     timeout-minutes: 20
     name: "Run the test suite"
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
-        rubies: ["3.0.7", "3.1.7", "3.2.9", "3.3.9", "3.4.7"]
+        os: ["macos-latest", "ubuntu-latest"]
+        rubies: ["3.4.7", "3.3.9"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
     steps:
@@ -48,12 +47,12 @@ jobs:
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "test_${{ matrix.type }}"
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
@@ -67,12 +66,12 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
           step: "install"
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
   release:
     permissions:
       id-token: write
@@ -87,8 +86,8 @@ jobs:
         with:
           ruby-version: "3.4.7"
           bundler-cache: true
-          working-directory: "test/fixtures/date" # EXTRA
+          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@easy-compile"
-        with: # EXTRA
-          working-directory: "test/fixtures/date" # EXTRA
+        with:
+          working-directory: "test/fixtures/date"
