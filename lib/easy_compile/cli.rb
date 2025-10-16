@@ -20,13 +20,6 @@ module EasyCompile
       run_rake_tasks!(:compile)
     end
 
-    desc "compile_cross_rubies", "Compile a gem's native extension based on its gemspec."
-    def compile_cross_rubies
-      ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
-
-      run_rake_tasks!(:cross, :compile)
-    end
-
     desc "package", "Package the gem and its extension"
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
