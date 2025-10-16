@@ -6,6 +6,9 @@ inputs:
     description: "The working directory of the gem"
     default: "."
     required: false
+  token:
+    description: "Not important" # TODO No need for this. Only for testing purposes
+    required: false
 
 runs:
   using: "composite"
@@ -21,7 +24,11 @@ runs:
       working-directory: "tmp"
     - uses: actions/download-artifact@v5
       with:
-        path: "${{ inputs.working-directory }}/pkg"
+        artifact-ids: 4283005309,4283005567
+        run-id: 18545927463
+        github-token: "${{ inputs.token }}"
+        path: "${{ inputs.working-directory }}"
+        # path: "${{ inputs.working-directory }}/pkg"
         merge-multiple: true
     - name: "Release"
       uses: Edouard-chin/release-gem@ec-working-dir
