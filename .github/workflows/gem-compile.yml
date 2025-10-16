@@ -66,7 +66,6 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
         with:
