@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com"
 
-  spec.files = Dir["{exe,lib,scripts}/**/*", "LICENSE.md", "README.md"]
+  spec.files = Dir["{exe,lib,scripts}/**/*", "LICENSE.md", "README.md", "lib/easy_compile/templates/.github/**/*"]
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]

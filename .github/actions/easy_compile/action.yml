@@ -9,6 +9,9 @@ inputs:
   step:
     description: "The step to run"
     required: true
+  token:
+    description: "TODO this is needed to install the Easy Compile gem from the GitHub repo. Can be removed "
+    required: false
 
 runs:
   using: "composite"
@@ -18,6 +21,7 @@ runs:
       with:
         path: "tmp"
         repository: "shopify-playground/edouard-playground"
+        token: ${{ inputs.token }}
     - name: Install easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       shell: bash
       run: "rake install"
