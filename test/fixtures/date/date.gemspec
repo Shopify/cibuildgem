@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-version = File.foreach(File.expand_path("../lib/dummy_date.rb", __FILE__)).find do |line|
+version = File.foreach(File.expand_path("../lib/date.rb", __FILE__)).find do |line|
   /^\s*VERSION\s*=\s*["'](.*)["']/ =~ line and break $1
 end
 
 Gem::Specification.new do |s|
-  s.name = "edouard-dummy_date"
+  s.name = "date"
   s.version = version
   s.summary = "The official date library for Ruby."
   s.description = "The official date library for Ruby."
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
     s.require_path = %w{lib}
 
     s.files = [
-      "lib/dummy_date.rb", "ext/date/date_core.c", "ext/date/date_parse.c", "ext/date/date_strftime.c",
+      "lib/date.rb", "ext/date/date_core.c", "ext/date/date_parse.c", "ext/date/date_strftime.c",
       "ext/date/date_strptime.c", "ext/date/date_tmx.h", "ext/date/extconf.rb", "ext/date/prereq.mk",
       "ext/date/zonetab.h", "ext/date/zonetab.list"
     ]
