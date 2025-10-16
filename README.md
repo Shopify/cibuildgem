@@ -29,7 +29,7 @@ As noted by @flavorjoes, this toolchain works great but it's complex and brittle
 
 While Easy Compile is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
 
-1. Install Easy Compile: `gem install easy_compile`
+1. Install Easy Compile: `git clone https://github.com/shopify-playground/edouard-playground`, `cd edouard-playground && rake install`
 2. Generate the workflow: `cd` in your gem's folder and run `easy_compile ci_template`
 3. Commit the `.github/gem-compile.yaml` file.
 

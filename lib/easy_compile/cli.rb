@@ -46,7 +46,8 @@ module EasyCompile
     method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specifiy where."
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def ci_template
-      os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
+      # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
+      os = ["macos-latest", "ubuntu-latest"] # Just this for now because the CI takes too long otherwise.
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
       ruby_versions_for_testing = RubySeries.versions_to_test_agaist(ruby_requirements).map(&:to_s)
