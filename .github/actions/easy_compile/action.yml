@@ -9,9 +9,6 @@ inputs:
   step:
     description: "The step to run"
     required: true
-  token:
-    description: "Not important" # TODO Remove this. I only need that for testing purposes
-    required: false
 
 runs:
   using: "composite"
