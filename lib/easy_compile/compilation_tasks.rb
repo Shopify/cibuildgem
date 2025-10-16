@@ -27,10 +27,7 @@ module EasyCompile
 
     def ruby_cc_version
       required_ruby_version = @gemspec.required_ruby_version
-
-      selected_rubies = cross_rubies.select do |ruby_version|
-        required_ruby_version.satisfied_by?(ruby_version)
-      end
+      selected_rubies = RubySeries.versions_to_compile_against(required_ruby_version)
 
       selected_rubies.map(&:to_s).join(":")
     end
@@ -109,17 +106,6 @@ module EasyCompile
       return platform unless darwin?
 
       RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
-    end
-
-    def cross_rubies
-      versions = [
-        "3.4.6",
-        "3.3.9",
-        "3.2.9",
-      ]
-     versions.push("3.1.7", "3.0.7") unless Gem.win_platform? # GCC 15 incompatibility on Ruby 3.1 and 3.0 for windows.
-
-     versions.map { |version| Gem::Version.new(version) }
     end
 
     def find_gemspec(glob = "*.gemspec")

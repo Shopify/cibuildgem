@@ -50,10 +50,13 @@ module EasyCompile
     end
 
     desc "ci_template", "Generate CI template files"
-    method_option "rubies", type: :array, required: true, desc: "The Ruby version you want to test your gem on."
-    method_option "os", type: :array, required: true, desc: "The operating systems you want to test your gem on."
     def ci_template
-      directory(".github")
+      os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
+      ruby_requirements = compilation_task.gemspec.required_ruby_version
+      latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
+      ruby_versions_for_testing = RubySeries.versions_to_test_agaist(ruby_requirements).map(&:to_s)
+
+      directory(".github", context: instance_eval("binding"))
     end
 
     desc "release", "Release the gem with precompiled binaries"
