@@ -71,12 +71,28 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: bundle exec rake test # TODO This should be configurable
-    - name: "Download gems"
+    - name: "Download tarball for platform"
       if: "${{ inputs.step == 'install' }}"
       uses: actions/download-artifact@v5
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
+    - name: "Download all gems"
+      if: "${{ inputs.step == 'release' }}"
+      uses: actions/download-artifact@v5
+      with:
+        merge-multiple: true
     - name: "Install gems"
       if: "${{ inputs.step == 'install' }}"
       shell: bash
       run: gem install pkg/*.gem
+    - name: "Configure RubyGems crendentials in preparation for publishing"
+      if: "${{ inputs.step == 'release' }}"
+      uses: rubygems/configure-rubygems-credentials@v1.0.0
+    - name: "Push the gems to RubyGems"
+      if: "${{ inputs.step == 'release' }}"
+      shell: bash
+      run: easy_compile release --glob "pkg/*"
+    - name: "Waiting for RubyGems to fully index the new gems"
+      if: "${{ inputs.step == 'release' }}"
+      shell: bash
+      run: gem exec rubygems-await pkg/*.gem
