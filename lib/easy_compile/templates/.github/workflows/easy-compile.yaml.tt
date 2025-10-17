@@ -84,6 +84,7 @@ jobs:
   release:
     permissions:
       id-token: write
+      contents: read
     timeout-minutes: 5
     if: ${{ inputs.release }}
     name: "Release all gems with RubyGems"
@@ -94,13 +95,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-          bundler-cache: true
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@main"
-        <%- if options['working-directory'] -%>
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
-          working-directory: "<%= options['working-directory'] %>"
-        <%- end -%>
+          step: "release"
+          token: ${{ secrets.GITHUB_TOKEN  }}

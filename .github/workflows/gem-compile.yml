@@ -29,6 +29,7 @@ jobs:
         with:
           step: "compile"
           working-directory: "test/fixtures/date"
+          token: ${{ secrets.GITHUB_TOKEN  }}
   test:
     timeout-minutes: 20
     name: "Run the test suite"
@@ -53,6 +54,7 @@ jobs:
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/date"
+          token: ${{ secrets.GITHUB_TOKEN  }}
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
@@ -70,9 +72,11 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "install"
+          token: ${{ secrets.GITHUB_TOKEN  }}
   release:
     permissions:
       id-token: write
+      contents: read
     timeout-minutes: 5
     if: ${{ inputs.release }}
     name: "Release all gems with RubyGems"
@@ -83,9 +87,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-          bundler-cache: true
-          working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@main"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
-          working-directory: "test/fixtures/date"
+          step: "release"
+          token: ${{ secrets.GITHUB_TOKEN  }}
