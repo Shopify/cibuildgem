@@ -25,7 +25,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "compile"
           working-directory: "test/fixtures/date"
@@ -49,7 +49,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/date"
@@ -67,7 +67,7 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@easy-compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "install"
   release:
@@ -86,6 +86,6 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@easy-compile"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_publish@main"
         with:
           working-directory: "test/fixtures/date"
