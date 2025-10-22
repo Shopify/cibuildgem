@@ -68,14 +68,11 @@ end
 
 |         | MacOS Intel  | MacOS ARM | Windows x64 | Linux GNU x86_64|Linux AARCH64 |
 |---------|------------- | --------- | ------------|-----------------|-----------------|
-| Ruby 3.0| 🟢           | 🟢        | 🔴[^1]      | 🟢             | 🟠 (Not tested) |
-| Ruby 3.1| 🟢           | 🟢        | 🔴[^1]      | 🟢             | 🟠 (Not tested) |
+| Ruby 3.0| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
+| Ruby 3.1| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
 | Ruby 3.2| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
 | Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
 | Ruby 3.4| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
-
-[^1]: MSYS2 incompatibility with GCC 15.1. (See https://bugs.ruby-lang.org/issues/21286). This can be fixed by downgrading the GCC version. We'll work on this later.
-
 
 ## 🧪 Development
 
