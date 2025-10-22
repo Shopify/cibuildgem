@@ -88,6 +88,7 @@ module EasyCompile
       os = ["macos-latest", "ubuntu-latest"] # Just this for now because the CI takes too long otherwise.
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
+      runtime_version_for_compilation = RubySeries.runtime_version_for_compilation(ruby_requirements)
       ruby_versions_for_testing = RubySeries.versions_to_test_agaist(ruby_requirements).map(&:to_s)
 
       directory(".github", context: instance_eval("binding"))
@@ -108,6 +109,11 @@ module EasyCompile
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def print_ruby_cc_version
       print compilation_task.ruby_cc_version
+    end
+
+    desc "normalized_platform", "The platform name for compilation purposes", hide: true
+    def print_normalized_platform
+      print compilation_task.normalized_platform
     end
 
     private

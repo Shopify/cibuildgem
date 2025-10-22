@@ -21,7 +21,7 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "<%= latest_supported_ruby_version %>"
+          ruby-version: "<%= runtime_version_for_compilation %>"
           bundler-cache: true
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"

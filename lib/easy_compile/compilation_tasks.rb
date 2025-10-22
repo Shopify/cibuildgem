@@ -32,6 +32,18 @@ module EasyCompile
       selected_rubies.map(&:to_s).join(":")
     end
 
+    def normalized_platform
+      platform = RUBY_PLATFORM
+
+      if darwin?
+        RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
+      elsif win_platform?
+        RUBY_PLATFORM.sub(/mingw32/, 'mingw-ucrt')
+      else
+        platform
+      end
+    end
+
     private
 
     def setup_packaging
@@ -64,7 +76,7 @@ module EasyCompile
         ext.ext_dir = File.dirname(path)
         ext.lib_dir = binary_lib_dir if binary_lib_dir
         ext.gem_spec = gemspec
-        ext.cross_platform = platform_without_darwin_version
+        ext.cross_platform = normalized_platform
         ext.cross_compile = true
       end
 
@@ -84,6 +96,10 @@ module EasyCompile
       Gem::Platform.local.os == "darwin"
     end
 
+    def win_platform?
+      Gem.win_platform?
+    end
+
     def shared_enabled?
       RbConfig::CONFIG["ENABLE_SHARED"] == "yes"
     end
@@ -99,13 +115,6 @@ module EasyCompile
           File.write(task.name, makefile_content)
         end
       end
-    end
-
-    def platform_without_darwin_version
-      platform = RUBY_PLATFORM
-      return platform unless darwin?
-
-      RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
     end
 
     def find_gemspec(glob = "*.gemspec")

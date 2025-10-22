@@ -7,7 +7,8 @@ task.setup
 
 task "copy:stage:lib" do
   version = RUBY_VERSION.match(/(\d\.\d)/)[1]
-  path = "#{task.extension_task.lib_dir}/#{version}"
+  dest = File.join(task.extension_task.lib_dir, version)
+  src = File.join("tmp", task.extension_task.cross_platform, "stage", dest)
 
-  cp_r("tmp/#{task.extension_task.cross_platform}/stage/#{path}", path, remove_destination: true)
+  cp_r(src, dest, remove_destination: true)
 end

@@ -30,7 +30,7 @@ function setupRakeCompilerConfig() {
   let rubiesRbConfig = fs.globSync(`${rubiesPath()}/*/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
   let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
-  let rubyPlatform = withoutDarwinVersioning(cp.execSync('ruby -e "print RUBY_PLATFORM"', { encoding: 'utf-8' }))
+  let rubyPlatform = cp.execSync('easy_compile print_normalized_platform', { encoding: 'utf-8' })
 
   fs.mkdirSync(`${os.homedir()}/.rake-compiler`)
 
@@ -46,14 +46,6 @@ function setupRakeCompilerConfig() {
 
 function rubiesPath() {
   return path.join(process.env['RUNNER_TEMP'], 'rubies');
-}
-
-function withoutDarwinVersioning(platform) {
-  if (!isDarwin()) {
-    return platform
-  }
-
-  return platform.replace(/(.*-darwin)\d+/, '$1')
 }
 
 function getRbConfigName(rubyPlatform, rubyVersion) {
