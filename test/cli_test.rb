@@ -4,8 +4,14 @@ require "test_helper"
 
 module EasyCompile
   class CLITest < Minitest::Test
+    def setup
+      super
+
+      @dllext = RbConfig::MAKEFILE_CONFIG["DLEXT"]
+    end
+
     def test_compile
-      binary_path = "test/fixtures/dummy_gem/lib/hello_world.bundle"
+      binary_path = "test/fixtures/dummy_gem/lib/hello_world.#{@dllext}"
 
       Dir.chdir("test/fixtures/dummy_gem") do
         capture_subprocess_io do
@@ -15,11 +21,11 @@ module EasyCompile
 
       assert(File.exist?(binary_path))
     ensure
-      FileUtils.rm(binary_path)
+      FileUtils.rm_rf(binary_path)
     end
 
     def test_clean
-      binary_path = "test/fixtures/dummy_gem/tmp/#{RUBY_PLATFORM}/hello_world/#{RUBY_VERSION}/hello_world.bundle"
+      binary_path = "test/fixtures/dummy_gem/tmp/#{RUBY_PLATFORM}/hello_world/#{RUBY_VERSION}/hello_world.#{@dllext}"
 
       Dir.chdir("test/fixtures/dummy_gem") do
         capture_subprocess_io do
@@ -97,9 +103,9 @@ module EasyCompile
 
       assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
     ensure
-      FileUtils.rm("tmp/foo.gem")
-      FileUtils.rm("tmp/bar.gem")
-      FileUtils.rm("tmp/some_file")
+      FileUtils.rm_rf("tmp/foo.gem")
+      FileUtils.rm_rf("tmp/bar.gem")
+      FileUtils.rm_rf("tmp/some_file")
     end
   end
 end

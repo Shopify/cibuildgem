@@ -5,5 +5,4 @@
 /doc/
 /pkg/
 /spec/reports/
-/tmp/
 /.github/actions/easy_compile/node_modules
