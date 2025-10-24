@@ -82,10 +82,10 @@ module EasyCompile
       and determine what Ruby versions needs to be used for precompiling a "fat gem".
     MSG
     method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specify where."
-    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def ci_template
       # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
       os = ["macos-latest", "ubuntu-latest"] # Just this for now because the CI takes too long otherwise.
+
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
       runtime_version_for_compilation = RubySeries.runtime_version_for_compilation(ruby_requirements)
@@ -101,7 +101,7 @@ module EasyCompile
         pathname = Pathname(file)
         next if pathname.directory? || pathname.extname != ".gem"
 
-        system("gem push #{file}", exception: true)
+        Kernel.system("gem push #{file}", exception: true)
       end
     end
 
@@ -127,7 +127,7 @@ module EasyCompile
     end
 
     def compilation_task
-      @compilation_task ||= CompilationTasks.new(false, options[:gemspec])
+      @compilation_task ||= CompilationTasks.new(false)
     end
   end
 end

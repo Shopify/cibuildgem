@@ -1,0 +1,105 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+module EasyCompile
+  class CLITest < Minitest::Test
+    def test_compile
+      binary_path = "test/fixtures/dummy_gem/lib/hello_world.bundle"
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["compile"])
+        end
+      end
+
+      assert(File.exist?(binary_path))
+    ensure
+      FileUtils.rm(binary_path)
+    end
+
+    def test_clean
+      binary_path = "test/fixtures/dummy_gem/tmp/#{RUBY_PLATFORM}/hello_world/#{RUBY_VERSION}/hello_world.bundle"
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["compile"])
+        end
+      end
+
+      assert(File.exist?(binary_path))
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["clean"])
+        end
+      end
+
+      refute(File.exist?(binary_path))
+    end
+
+    def test_clobber
+      pkg_folder = "test/fixtures/dummy_gem/pkg"
+
+      FileUtils.mkdir_p(pkg_folder)
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["clobber"])
+        end
+      end
+
+      refute(Dir.exist?(pkg_folder))
+    end
+
+    def test_ci_template
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+
+      expected_workflow = File.read("test/fixtures/expected_github_workflow.yml")
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["ci_template"])
+        end
+      end
+
+      assert(File.exist?(workflow_path))
+      assert_equal(expected_workflow, File.read(workflow_path))
+    ensure
+      FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
+    end
+
+    def test_ci_template_when_passed_a_working_directory
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+
+      expected_workflow = File.read("test/fixtures/expected_github_workflow_working_dir.yml")
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["ci_template", "--working-directory", "test/fixtures/date"])
+        end
+      end
+
+      assert(File.exist?(workflow_path))
+      assert_equal(expected_workflow, File.read(workflow_path))
+    ensure
+      FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
+    end
+
+    def test_release
+      FileUtils.touch("tmp/foo.gem")
+      FileUtils.touch("tmp/bar.gem")
+      FileUtils.touch("tmp/some_file")
+
+      gem_pushed = []
+
+      Kernel.stub(:system, ->(gem, _) { gem_pushed << gem }) do
+        CLI.start(["release", "--glob", "tmp/*"])
+      end
+
+      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+    ensure
+      FileUtils.rm("tmp/foo.gem")
+      FileUtils.rm("tmp/bar.gem")
+      FileUtils.rm("tmp/some_file")
+    end
+  end
+end
