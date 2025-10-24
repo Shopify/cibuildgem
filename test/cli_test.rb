@@ -107,5 +107,15 @@ module EasyCompile
       FileUtils.rm_rf("tmp/bar.gem")
       FileUtils.rm_rf("tmp/some_file")
     end
+
+    def test_print_ruby_cc_version
+      out, _ = capture_subprocess_io do
+        Dir.chdir("test/fixtures/dummy_gem") do
+          CLI.start(["print_ruby_cc_version"])
+        end
+      end
+
+      assert_equal("3.4.6:3.3.8:3.2.8", out)
+    end
   end
 end
