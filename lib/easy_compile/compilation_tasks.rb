@@ -11,6 +11,7 @@ module EasyCompile
 
     def initialize(create_packaging_task = false, gemspec = nil)
       @gemspec  = Bundler.load_gemspec(gemspec || find_gemspec)
+      verify_gemspec!
 
       @create_packaging_task = create_packaging_task
     end
@@ -124,6 +125,15 @@ module EasyCompile
       raise GemspecError, <<~EOM
         Couldn't find a gemspec in the current directory.
         Make sure to run any easy_compile commands in the root of your gem folder.
+      EOM
+    end
+
+    def verify_gemspec!
+      return if gemspec.extensions.any?
+
+      raise GemspecError, <<~EOM
+        Your gem has no native extention defined in its gemspec.
+        This tool can't be used on pure Ruby gems.
       EOM
     end
   end

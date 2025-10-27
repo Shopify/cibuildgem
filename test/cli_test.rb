@@ -122,11 +122,9 @@ module EasyCompile
       out = nil
 
       Dir.chdir("lib") do
-        Kernel.stub(:exit, ->(_) { raise }) do
-          out, _ = capture_subprocess_io do
-            assert_raises(StandardError) do
-              CLI.start(["print_ruby_cc_version"])
-            end
+        out, _ = capture_subprocess_io do
+          raise_instead_of_exit do
+            CLI.start(["print_ruby_cc_version"])
           end
         end
       end
@@ -135,6 +133,31 @@ module EasyCompile
         Couldn't find a gemspec in the current directory.
         Make sure to run any easy_compile commands in the root of your gem folder.
       MSG
+    end
+
+    def test_when_cli_runs_in_project_with_no_native_extension
+      out = nil
+
+      out, _ = capture_subprocess_io do
+        raise_instead_of_exit do
+          CLI.start(["print_ruby_cc_version"])
+        end
+      end
+
+      assert_equal(<<~MSG, out)
+        Your gem has no native extention defined in its gemspec.
+        This tool can't be used on pure Ruby gems.
+      MSG
+    end
+
+    private
+
+    def raise_instead_of_exit(&block)
+      Kernel.stub(:exit, ->(_) { raise }) do
+        assert_raises(StandardError) do
+          block.call
+        end
+      end
     end
   end
 end
