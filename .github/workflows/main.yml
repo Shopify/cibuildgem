@@ -15,3 +15,27 @@ jobs:
           bundler-cache: true
       - name: "Run the test suite"
         run: "bundle exec rake test"
+  gem_deps:
+    timeout-minutes: 10
+    name: "Ensure CLI is compatible no matter the gem dependencies"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - name: "Setup ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          bundler-cache: true
+      - name: "Install the gem"
+        run: "rake install"
+      - name: "Bundle install on target gem"
+        working-directory: "test/fixtures/dummy_gem"
+        run: "bundle install"
+      - name: "Compile when target has rake as dependency"
+        working-directory: "test/fixtures/dummy_gem"
+        run: "easy_compile compile"
+      - name: "Compile when target gem doesn't have rake as dependency"
+        working-directory: "test/fixtures/dummy_gem"
+        run: "easy_compile compile"
+        env:
+          BUNDLE_GEMFILE: "Gemfile_no_rake"

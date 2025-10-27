@@ -121,9 +121,13 @@ module EasyCompile
     def run_rake_tasks!(*tasks)
       all_tasks = tasks.join(" ")
       rakelibdir = File.expand_path("tasks", __dir__)
-      load_paths = Gem.loaded_specs["rake-compiler"].full_require_paths.join(":")
+      rake_compiler_path = Gem.loaded_specs["rake-compiler"].full_require_paths
+      rake_specs = Gem.loaded_specs["rake"]
+      rake_executable = rake_specs.bin_file("rake")
+      rake_path = rake_specs.full_require_paths
+      load_paths = (rake_compiler_path + rake_path).join(File::PATH_SEPARATOR)
 
-      system("bundle exec rake #{all_tasks} -I#{load_paths} -R#{rakelibdir}", exception: true)
+      system({ "RUBYLIB" => load_paths }, "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir}", exception: true)
     end
 
     def compilation_task
