@@ -12,7 +12,6 @@ Gem::Specification.new do |spec|
   spec.description = "Don't use it, really."
   spec.homepage = "https://example.com"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
