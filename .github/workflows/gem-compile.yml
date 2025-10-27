@@ -1,12 +1,5 @@
 name: "Package gems with precompiled binaries"
-on:
-  workflow_dispatch:
-    inputs:
-      release:
-        description: "If the whole build passes on all platforms, release the gems on RubyGems.org"
-        required: false
-        type: boolean
-        default: false
+on: push
 
 jobs:
   compile:
@@ -14,7 +7,7 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Install gperf"
@@ -32,7 +25,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@ec-debug-windows-again"
         with:
           step: "compile"
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
@@ -43,9 +36,9 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
-        rubies: ["3.4.7", "3.1.7"]
-        type: ["cross", "native"]
+        os: ["windows-latest"]
+        rubies: ["3.1.7"]
+        type: ["cross"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
@@ -57,7 +50,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@ec-debug-windows-again"
         with:
           step: "test_${{ matrix.type }}"
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
@@ -68,7 +61,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
@@ -76,7 +69,7 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@ec-debug-windows-again"
         with:
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           step: "install"
@@ -95,7 +88,7 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@ec-debug-windows-again"
         with:
           step: "release"
           token: ${{ secrets.GITHUB_TOKEN  }}

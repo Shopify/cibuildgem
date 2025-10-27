@@ -5,6 +5,7 @@ begin
   ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
   require "#{ruby_version}/date_core"
 rescue LoadError
+  puts "WARNING: Can't load date_core from the fat gem"
   require "date_core"
 end
 

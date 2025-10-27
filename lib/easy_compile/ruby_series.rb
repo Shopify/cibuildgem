@@ -34,9 +34,9 @@ module EasyCompile
     def cross_rubies
       [
         Gem::Version.new("3.4.6"),
-        Gem::Version.new("3.3.8"),
-        Gem::Version.new("3.2.8"),
-        Gem::Version.new("3.1.6"),
+        # Gem::Version.new("3.3.8"),
+        # Gem::Version.new("3.2.8"),
+        # Gem::Version.new("3.1.6"),
         Gem::Version.new("3.0.6"),
       ]
     end
