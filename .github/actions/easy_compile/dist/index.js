@@ -28211,7 +28211,7 @@ async function run(workingDirectory) {
   let ccRubies = cp.execSync('easy_compile print_ruby_cc_version', { cwd: workingDirectory, encoding: 'utf-8' })
 
   await downloadRubies(ccRubies.split(':'))
-  setupRakeCompilerConfig()
+  setupRakeCompilerConfig(workingDirectory)
 }
 
 async function downloadRubies(rubies) {
@@ -28227,11 +28227,11 @@ async function downloadRubies(rubies) {
   }
 }
 
-function setupRakeCompilerConfig() {
+function setupRakeCompilerConfig(workingDirectory) {
   let rubiesRbConfig = fs.globSync(`${rubiesPath()}/*/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
   let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
-  let rubyPlatform = cp.execSync('easy_compile print_normalized_platform', { encoding: 'utf-8' })
+  let rubyPlatform = cp.execSync('easy_compile print_normalized_platform', { cwd: workingDirectory, encoding: 'utf-8' })
 
   fs.mkdirSync(`${os.homedir()}/.rake-compiler`)
 
