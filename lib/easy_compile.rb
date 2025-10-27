@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "easy_compile/version"
+require_relative "easy_compile/errors"
 
 module EasyCompile
   autoload :CLI,              "easy_compile/cli"

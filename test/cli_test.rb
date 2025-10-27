@@ -117,5 +117,24 @@ module EasyCompile
 
       assert_equal("3.4.6:3.3.8:3.2.8:3.1.6:3.0.6", out)
     end
+
+    def test_when_cli_runs_in_project_with_no_gemspec
+      out = nil
+
+      Dir.chdir("lib") do
+        Kernel.stub(:exit, ->(_) { raise }) do
+          out, _ = capture_subprocess_io do
+            assert_raises(StandardError) do
+              CLI.start(["print_ruby_cc_version"])
+            end
+          end
+        end
+      end
+
+      assert_equal(<<~MSG, out)
+        Couldn't find a gemspec in the current directory.
+        Make sure to run any easy_compile commands in the root of your gem folder.
+      MSG
+    end
   end
 end

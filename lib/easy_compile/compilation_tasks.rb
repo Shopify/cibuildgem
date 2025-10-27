@@ -118,7 +118,13 @@ module EasyCompile
     end
 
     def find_gemspec(glob = "*.gemspec")
-      Dir.glob(glob).sort.first
+      gemspec = Dir.glob(glob).sort.first
+      return gemspec if gemspec
+
+      raise GemspecError, <<~EOM
+        Couldn't find a gemspec in the current directory.
+        Make sure to run any easy_compile commands in the root of your gem folder.
+      EOM
     end
   end
 end

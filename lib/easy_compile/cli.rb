@@ -132,6 +132,10 @@ module EasyCompile
 
     def compilation_task
       @compilation_task ||= CompilationTasks.new(false)
+    rescue GemspecError => e
+      print e.message
+
+      Kernel.exit(false)
     end
   end
 end
