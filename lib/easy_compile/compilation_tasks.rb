@@ -38,8 +38,6 @@ module EasyCompile
 
       if darwin?
         RUBY_PLATFORM.sub(/(.*-darwin)\d+/, '\1')
-      elsif win_platform?
-        RUBY_PLATFORM.sub(/mingw32/, 'mingw-ucrt')
       else
         platform
       end
@@ -95,10 +93,6 @@ module EasyCompile
 
     def darwin?
       Gem::Platform.local.os == "darwin"
-    end
-
-    def win_platform?
-      Gem.win_platform?
     end
 
     def shared_enabled?
