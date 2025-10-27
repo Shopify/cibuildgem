@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/date"
   test:
-    timeout-minutes: 20
+    timeout-minutes: 30
     name: "Run the test suite"
     needs: compile
     strategy:
