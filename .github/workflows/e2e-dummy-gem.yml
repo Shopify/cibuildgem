@@ -18,7 +18,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "./.github/actions/easy_compile"
         with:
           step: "compile"
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "./.github/actions/easy_compile"
         with:
           step: "test_${{ matrix.type }}"
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
@@ -57,12 +57,14 @@ jobs:
         os: ["macos-latest", "ubuntu-latest", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
       - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+        uses: "./.github/actions/easy_compile"
         with:
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           step: "install"
