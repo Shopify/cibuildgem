@@ -20,6 +20,9 @@ jobs:
       - name: "Install gperf"
         if: ${{ matrix.os == 'windows-latest' }}
         run: choco install gperf
+      - name: "Install gperf"
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: apt-get -qy --no-install-recommend install gperf
       - name: "Checkout code"
         uses: "actions/checkout@v5"
       - name: "Setup Ruby"
