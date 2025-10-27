@@ -22,7 +22,7 @@ jobs:
         run: choco install gperf
       - name: "Install gperf"
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: apt-get -qy --no-install-recommend install gperf
+        run: sudo apt-get -qy install gperf
       - name: "Checkout code"
         uses: "actions/checkout@v5"
       - name: "Setup Ruby"
