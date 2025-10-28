@@ -17,9 +17,7 @@ jobs:
           ruby-version: "3.1.7"
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
+      - run: rake install
       - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
-        with:
-          step: "compile"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: "test/fixtures/dummy_gem"
+        working-directory: "test/fixtures/dummy_gem"
+        run: easy_compile print_ruby_cc_version
