@@ -11,9 +11,18 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.4.7"
       - name: "Install the gem"
         run: "rake install"
       - name: "Outputs what I need"
         id: easy_compile
         working-directory: "test/fixtures/dummy_gem"
         run: easy_compile foo
+  read_versions:
+    needs: get_versions
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo '${{ toJSON(needs.get_versions.outputs.ruby_versions) }}'
