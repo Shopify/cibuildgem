@@ -56,7 +56,7 @@ module EasyCompile
       requirement will change which will break the workflow. This also allow to determine the Ruby
       versions dynamically based on the running platform.
     MSG
-    def get_versions
+    def runtime_version_for_compilation
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       outputs = [
         "latest_supported_ruby_version=#{RubySeries.latest_version_for_requirements(ruby_requirements)}",

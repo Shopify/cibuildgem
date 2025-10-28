@@ -11,4 +11,15 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
-      - run: sudo rake install
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: ${{ needs.get_versions.outputs.runtime_version_for_compilation }}
+          bundler-cache: true
+          working-directory: "test/fixtures/dummy_gem"
+      - name: "Run easy compile"
+        uses: "./.github/actions/easy_compile"
+        with:
+          step: "compile"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: "test/fixtures/dummy_gem"

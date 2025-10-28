@@ -13,15 +13,9 @@ inputs:
     description: "TODO this is needed to install the Easy Compile gem from the GitHub repo. Can be removed "
     required: false
 outputs:
-  latest_supported_ruby_version:
-    description: "The most recent ruby versions (from a list) this gem is compatible with."
-    value: ${{ steps.get_versions.outputs.latest_supported_ruby_version }}
   runtime_version_for_compilation:
     description: "The ruby version used for compiling fat gems."
     value: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
-  ruby_versions_for_testing:
-    description: "An array of ruby versions selected from a list, compatible with the gem."
-    value: ${{ steps.get_versions.outputs.ruby_versions_for_testing }}
 
 runs:
   using: "composite"
@@ -34,19 +28,19 @@ runs:
         token: ${{ inputs.token }}
     - name: Install easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       shell: bash
-      run: "rake install --local"
+      run: "sudo rake install"
       working-directory: "tmp"
     - name: "Outputs the ruby versions needed for compilation"
-      if: "${{ inputs.step == 'get_versions' }}"
+      if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       id: get_versions
-      run: easy_compile get_versions
+      run: easy_compile runtime_version_for_compilation
     - name: "Setup Ruby"
       if: "${{ inputs.step == 'compile' }}"
       uses: "ruby/setup-ruby@v1"
       with:
-        ruby-version: "3.4.7"
+        ruby-version: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
