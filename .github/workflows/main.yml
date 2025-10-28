@@ -7,7 +7,9 @@ jobs:
     name: "Testing the gem"
     runs-on: ubuntu-latest
     outputs:
-      ruby_versions: ${{ steps.easy_compile.outputs.versions }}
+      latest_supported_ruby_version: ${{ steps.easy_compile.outputs.latest_supported_ruby_version }}
+      runtime_version_for_compilation: ${{ steps.easy_compile.outputs.runtime_version_for_compilation }}
+      ruby_versions_for_testing: ${{ steps.easy_compile.outputs.ruby_versions_for_testing }}
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -25,4 +27,6 @@ jobs:
     needs: get_versions
     runs-on: ubuntu-latest
     steps:
-      - run: echo '${{ toJSON(needs.get_versions.outputs.ruby_versions) }}'
+      - run: echo '${{ needs.get_versions.outputs.latest_supported_ruby_version }}'
+      - run: echo '${{ needs.get_versions.outputs.runtime_version_for_compilation }}'
+      - run: echo '${{ needs.get_versions.outputs.ruby_versions_for_testing }}'
