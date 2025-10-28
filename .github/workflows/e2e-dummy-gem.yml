@@ -1,0 +1,14 @@
+name: "Run a end to end test on the dummy gem"
+on: push
+jobs:
+  compile:
+    timeout-minutes: 20
+    name: "Cross compile the gem on different ruby versions"
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - run: rake install:local

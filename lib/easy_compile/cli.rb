@@ -48,8 +48,15 @@ module EasyCompile
       run_rake_tasks!(:cross, :native, :gem)
     end
 
-    desc "foo", "Foo"
-    def foo
+    desc "get_versions", "Output the Ruby versions required for compilation", hide: true
+    long_desc <<~MSG
+      Compiling a gem and testing it requires a variety of Ruby versions. This command is used
+      by the companion GitHub action to determine dynamically what Ruby versions are needed.
+      We don't want to hardcode the versions in the GitHub workflow, because as a gem evolves it's
+      requirement will change which will break the workflow. This also allow to determine the Ruby
+      versions dynamically based on the running platform.
+    MSG
+    def get_versions
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       outputs = [
         "latest_supported_ruby_version=#{RubySeries.latest_version_for_requirements(ruby_requirements)}",
