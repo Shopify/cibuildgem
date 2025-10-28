@@ -7,7 +7,7 @@ jobs:
     name: "Testing the gem"
     runs-on: ubuntu-latest
     outputs:
-      ruby_versions: ${{ steps.easy_compile.outputs.test }}
+      ruby_versions: ${{ steps.easy_compile.outputs.versions }}
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
