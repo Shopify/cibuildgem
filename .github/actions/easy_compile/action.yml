@@ -31,7 +31,6 @@ runs:
       uses: "ruby/setup-ruby@v1"
       with:
         ruby-version: 3.4.7
-        working-directory: ${{ inputs.working-directory }}
     - name: Install easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       shell: bash
       run: "rake install"
@@ -48,6 +47,7 @@ runs:
       with:
         ruby-version: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
         working-directory: ${{ inputs.working-directory }}
+        bundler-cache: true
     - name: Install easy compile
       if: "${{ inputs.step == 'compile' }}"
       shell: bash
