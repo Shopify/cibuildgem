@@ -26,9 +26,15 @@ runs:
         path: "tmp"
         repository: "shopify-playground/edouard-playground"
         token: ${{ inputs.token }}
+    - name: "Setup Ruby"
+      if: "${{ inputs.step == 'compile' }}"
+      uses: "ruby/setup-ruby@v1"
+      with:
+        ruby-version: 3.4.7
+        working-directory: ${{ inputs.working-directory }}
     - name: Install easy compile # TODO this can be removed once this tool is pusblished on RubyGems
       shell: bash
-      run: "sudo rake install"
+      run: "rake install"
       working-directory: "tmp"
     - name: "Outputs the ruby versions needed for compilation"
       if: "${{ inputs.step == 'compile' }}"
@@ -45,7 +51,7 @@ runs:
     - name: Install easy compile
       if: "${{ inputs.step == 'compile' }}"
       shell: bash
-      run: "sudo rake install"
+      run: "rake install"
       working-directory: "tmp"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
