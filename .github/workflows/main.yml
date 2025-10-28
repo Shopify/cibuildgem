@@ -7,7 +7,7 @@ jobs:
     name: "Testing the gem"
     runs-on: ubuntu-latest
     outputs:
-      ruby_versions: {{ steps.easy_compile.outputs.test }}
+      ruby_versions: ${{ steps.easy_compile.outputs.test }}
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -17,8 +17,3 @@ jobs:
         id: easy_compile
         working-directory: "test/fixtures/dummy_gem"
         run: easy_compile foo
-  read_versions:
-    needs: get_versions
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo '${{ toJSON(needs.get_versions.outputs.ruby_versions) }}'
