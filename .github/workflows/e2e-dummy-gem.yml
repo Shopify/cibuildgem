@@ -20,4 +20,4 @@ jobs:
       - run: rake install
       - name: "Run easy compile"
         working-directory: "test/fixtures/dummy_gem"
-        run: easy_compile print_ruby_cc_version
+        run: easy_compile compile
