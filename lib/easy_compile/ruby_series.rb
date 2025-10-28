@@ -37,7 +37,6 @@ module EasyCompile
         Gem::Version.new("3.3.8"),
         Gem::Version.new("3.2.8"),
         Gem::Version.new("3.1.6"),
-        Gem::Version.new("3.0.6"),
       ]
     end
 
@@ -47,7 +46,6 @@ module EasyCompile
         Gem::Version.new("3.3.9"),
         Gem::Version.new("3.2.9"),
         Gem::Version.new("3.1.7"),
-        Gem::Version.new("3.0.7"),
       ]
     end
   end

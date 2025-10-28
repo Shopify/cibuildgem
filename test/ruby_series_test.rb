@@ -31,7 +31,7 @@ module EasyCompile
     def test_latest_version_for_compilation_multiple
       requirements = Gem::Requirement.new("> 3")
 
-      assert_equal("3.0.7", RubySeries.runtime_version_for_compilation(requirements).to_s)
+      assert_equal("3.1.7", RubySeries.runtime_version_for_compilation(requirements).to_s)
     end
 
     def test_versions_to_compile_against

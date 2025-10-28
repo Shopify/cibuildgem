@@ -28,7 +28,7 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "3.0.7"
+          ruby-version: "3.1.7"
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run easy compile"
