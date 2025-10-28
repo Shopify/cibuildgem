@@ -79,7 +79,7 @@ module EasyCompile
         ext.cross_compile = true
       end
 
-      disable_shared if darwin? && shared_enabled?
+      disable_shared if darwin?
     ensure
       self.binary_name = nil
     end
@@ -93,10 +93,6 @@ module EasyCompile
 
     def darwin?
       Gem::Platform.local.os == "darwin"
-    end
-
-    def shared_enabled?
-      RbConfig::CONFIG["ENABLE_SHARED"] == "yes"
     end
 
     def disable_shared
