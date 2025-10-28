@@ -45,7 +45,7 @@ runs:
     - name: Install easy compile
       if: "${{ inputs.step == 'compile' }}"
       shell: bash
-      run: "rake install"
+      run: "sudo rake install"
       working-directory: "tmp"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
