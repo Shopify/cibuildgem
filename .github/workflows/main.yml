@@ -1,10 +1,9 @@
-name: "Run the test suite"
+name: "Run a end to end test on the dummy gem"
 on: push
-
 jobs:
   get_versions:
     timeout-minutes: 10
-    name: "Testing the gem"
+    name: "Get the ruby versions needed to compile"
     runs-on: ubuntu-latest
     outputs:
       latest_supported_ruby_version: ${{ steps.easy_compile.outputs.latest_supported_ruby_version }}
@@ -23,10 +22,26 @@ jobs:
         id: easy_compile
         working-directory: "test/fixtures/dummy_gem"
         run: easy_compile foo
-  read_versions:
+  compile:
     needs: get_versions
-    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    name: "Cross compile the gem on different ruby versions"
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+    runs-on: "${{ matrix.os }}"
     steps:
-      - run: echo '${{ needs.get_versions.outputs.latest_supported_ruby_version }}'
-      - run: echo '${{ needs.get_versions.outputs.runtime_version_for_compilation }}'
-      - run: echo '${{ needs.get_versions.outputs.ruby_versions_for_testing }}'
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - name: "Setup Ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: ${{ needs.get_versions.outputs.runtime_version_for_compilation }}
+          bundler-cache: true
+          working-directory: "test/fixtures/dummy_gem"
+      - name: "Run easy compile"
+        uses: "./.github/actions/easy_compile"
+        with:
+          step: "compile"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: "test/fixtures/dummy_gem"
