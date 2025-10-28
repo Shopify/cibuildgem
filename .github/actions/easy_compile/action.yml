@@ -12,6 +12,16 @@ inputs:
   token:
     description: "TODO this is needed to install the Easy Compile gem from the GitHub repo. Can be removed "
     required: false
+outputs:
+  latest_supported_ruby_version:
+    description: "TODO"
+    value: ${{ steps.get_versions.outputs.latest_supported_ruby_version }}
+  runtime_version_for_compilation:
+    description: "TODO"
+    value: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
+  ruby_versions_for_testing:
+    description: "TODO"
+    value: ${{ steps.get_versions.outputs.ruby_versions_for_testing }}
 
 runs:
   using: "composite"
@@ -26,6 +36,12 @@ runs:
       shell: bash
       run: "rake install"
       working-directory: "tmp"
+    - name: "Outputs the ruby versions needed for compilation"
+      if: "${{ inputs.step == 'get_versions' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: get_versions
+      run: easy_compile foo
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8

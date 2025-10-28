@@ -6,9 +6,9 @@ jobs:
     name: "Get the ruby versions needed to compile"
     runs-on: ubuntu-latest
     outputs:
-      latest_supported_ruby_version: ${{ steps.easy_compile.outputs.latest_supported_ruby_version }}
-      runtime_version_for_compilation: ${{ steps.easy_compile.outputs.runtime_version_for_compilation }}
-      ruby_versions_for_testing: ${{ steps.easy_compile.outputs.ruby_versions_for_testing }}
+      latest_supported_ruby_version: ${{ steps.get_versions.outputs.latest_supported_ruby_version }}
+      runtime_version_for_compilation: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
+      ruby_versions_for_testing: ${{ steps.get_versions.outputs.ruby_versions_for_testing }}
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -16,12 +16,13 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Install the gem"
-        run: "rake install"
-      - name: "Outputs what I need"
-        id: easy_compile
-        working-directory: "test/fixtures/dummy_gem"
-        run: easy_compile foo
+      - name: "Run easy compile"
+        id: get_versions
+        uses: "./.github/actions/easy_compile"
+        with:
+          step: "get_versions"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: "test/fixtures/dummy_gem"
   compile:
     needs: get_versions
     timeout-minutes: 20
