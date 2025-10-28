@@ -104,6 +104,7 @@ module EasyCompile
 
       makefile_tasks.each do |task|
         task.enhance do
+          puts "#{task.name} is being enhanced"
           makefile_content = File.read(task.name)
           makefile_content.sub!(/(LIBRUBYARG_SHARED = )(?:-l\$\(RUBY_SO_NAME\))(.*)/, '\1\2')
 

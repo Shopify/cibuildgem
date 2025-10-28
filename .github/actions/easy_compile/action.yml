@@ -45,8 +45,7 @@ runs:
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
         path: |
-          ${{ inputs.working-directory }}/tmp/**/*.so
-          ${{ inputs.working-directory }}/tmp/**/*.bundle
+          ${{ inputs.working-directory }}/tmp/**/*
           ${{ inputs.working-directory }}/pkg/*.gem
         if-no-files-found: error
         retention-days: 1
