@@ -41,6 +41,7 @@ runs:
       uses: "ruby/setup-ruby@v1"
       with:
         ruby-version: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
+        working-direectory: ${{ inputs.working-directory }}
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
