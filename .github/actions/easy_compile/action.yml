@@ -70,7 +70,7 @@ runs:
       if: "${{ startsWith(inputs.step, 'test') }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: bundle exec rake test # TODO This should be configurable
+      run: easy_compile test # TODO This should be configurable
     - name: "Download tarball for platform"
       if: "${{ inputs.step == 'install' }}"
       uses: actions/download-artifact@v5

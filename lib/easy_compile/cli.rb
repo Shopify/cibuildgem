@@ -25,7 +25,7 @@ module EasyCompile
       to the compilation.
     MSG
     def compile
-      run_rake_tasks!(:compile)
+      run_rake_tasks!("easy_compile:setup", :compile)
     end
 
     desc "package", "Compile and package a 'fat gem'.", hide: true
@@ -44,12 +44,20 @@ module EasyCompile
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
 
-      run_rake_tasks!(:cross, :native, :gem)
+      run_rake_tasks!("easy_compile:setup", :cross, :native, :gem)
+    end
+
+    desc "test", "Run the test suites of the target gem"
+    long_desc <<~EOM
+      EasyCompile will run the test suite of the gem. It either expects a `spec` or `test` task defined.
+    EOM
+    def test
+      run_rake_tasks!(:test)
     end
 
     desc "copy_from_staging_to_lib", "Copy the staging binary. For internal usage.", hide: true
     def copy_from_staging_to_lib
-      run_rake_tasks!("copy:stage:lib")
+      run_rake_tasks!("easy_compile:setup", "copy:stage:lib")
     end
 
     desc "clean", "Cleanup temporary compilation artifacts."
@@ -60,7 +68,7 @@ module EasyCompile
       to cleanup by adding files to the vanilla CLEAN rake list.
     MSG
     def clean
-      run_rake_tasks!(:clean)
+      run_rake_tasks!("easy_compile:setup", :clean)
     end
 
     desc "clobber", "Remove compiled binaries."
@@ -71,7 +79,7 @@ module EasyCompile
       to remove by adding files to the vanilla CLOBBER rake list.
     MSG
     def clobber
-      run_rake_tasks!(:clobber)
+      run_rake_tasks!("easy_compile:setup", :clobber)
     end
 
     desc "ci_template", "Generate CI template files."

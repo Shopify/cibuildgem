@@ -150,6 +150,40 @@ module EasyCompile
       MSG
     end
 
+    def test_cli_test_command_when_a_test_rake_task_is_defined
+      out = nil
+
+      Dir.chdir("test/fixtures/test_task_defined") do
+        out, _ = capture_subprocess_io do
+          CLI.start(["test"])
+        end
+      end
+
+      assert_equal("The test task was called.", out)
+    end
+
+    def test_cli_test_command_when_a_spec_rake_task_is_defined
+      out = nil
+
+      Dir.chdir("test/fixtures/spec_task_defined") do
+        out, _ = capture_subprocess_io do
+          CLI.start(["test"])
+        end
+      end
+
+      assert_equal("The spec task was called.", out)
+    end
+
+    def test_cli_test_command_when_no_test_or_spec_rake_task_is_defined
+      Dir.chdir("test/fixtures/no_test_task_defined") do
+        capture_subprocess_io do
+          assert_raises(RuntimeError) do
+            CLI.start(["test"])
+          end
+        end
+      end
+    end
+
     private
 
     def raise_instead_of_exit(&block)
