@@ -42,6 +42,11 @@ runs:
       with:
         ruby-version: ${{ steps.get_versions.outputs.runtime_version_for_compilation }}
         working-directory: ${{ inputs.working-directory }}
+    - name: Install easy compile
+      if: "${{ inputs.step == 'compile' }}"
+      shell: bash
+      run: "rake install"
+      working-directory: "tmp"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
