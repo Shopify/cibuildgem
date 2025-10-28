@@ -101,6 +101,8 @@ module EasyCompile
 
     def disable_shared
       makefile_tasks = Rake::Task.tasks.select { |task| task.name =~ /Makefile/ }
+      p "RENTRE"
+      p makefile_tasks
 
       makefile_tasks.each do |task|
         task.enhance do
