@@ -47,6 +47,18 @@ module EasyCompile
       run_rake_tasks!(:cross, :native, :gem)
     end
 
+    desc "foo", "Foo"
+    def foo
+      ruby_requirements = compilation_task.gemspec.required_ruby_version
+      versions = {
+        latest_supported_ruby_version: RubySeries.latest_version_for_requirements(ruby_requirements),
+        runtime_version_for_compilation: RubySeries.runtime_version_for_compilation(ruby_requirements),
+        ruby_versions_for_testing: RubySeries.versions_to_test_agaist(ruby_requirements).map(&:to_s)
+      }
+
+      File.write(ENV['GITHUB_OUTPUT'], "versions=#{JSON.dump(versions)}\n", mode: "a")
+    end
+
     desc "copy_from_staging_to_lib", "Copy the staging binary. For internal usage.", hide: true
     def copy_from_staging_to_lib
       run_rake_tasks!("copy:stage:lib")
