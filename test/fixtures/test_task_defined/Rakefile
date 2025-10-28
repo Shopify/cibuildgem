@@ -1,0 +1,3 @@
+task :test do
+  print "The test task was called."
+end

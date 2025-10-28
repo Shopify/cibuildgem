@@ -1,0 +1,3 @@
+task :spec do
+  print "The spec task was called."
+end
