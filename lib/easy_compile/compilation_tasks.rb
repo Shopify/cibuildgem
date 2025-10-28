@@ -92,10 +92,14 @@ module EasyCompile
     end
 
     def darwin?
+      p Gem::Platform.local.os
+
       Gem::Platform.local.os == "darwin"
     end
 
     def shared_enabled?
+      p RbConfig::CONFIG["ENABLE_SHARED"]
+
       RbConfig::CONFIG["ENABLE_SHARED"] == "yes"
     end
 
