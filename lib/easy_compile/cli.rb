@@ -90,6 +90,7 @@ module EasyCompile
       and determine what Ruby versions needs to be used for precompiling a "fat gem".
     MSG
     method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specify where."
+    method_option "test-command", type: "string", required: false, desc: "The test command to run. Defaults to running `bundle exec rake test` and `bundle exec rake spec`."
     def ci_template
       # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
       os = ["macos-latest", "ubuntu-latest"] # Just this for now because the CI takes too long otherwise.

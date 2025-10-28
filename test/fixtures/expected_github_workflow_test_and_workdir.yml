@@ -13,7 +13,7 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: <%= os %>
+        os: ["macos-latest", "ubuntu-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
@@ -21,27 +21,23 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "<%= runtime_version_for_compilation %>"
+          ruby-version: "3.1.7"
           bundler-cache: true
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
+          working-directory: "foo/bar"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "compile"
           token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
+          working-directory: "foo/bar"
   test:
     timeout-minutes: 20
     name: "Run the test suite"
     needs: compile
     strategy:
       matrix:
-        os: <%= os %>
-        rubies: <%= ruby_versions_for_testing %>
+        os: ["macos-latest", "ubuntu-latest"]
+        rubies: ["3.4.7", "3.3.9", "3.2.9", "3.1.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
     steps:
@@ -52,33 +48,27 @@ jobs:
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
+          working-directory: "foo/bar"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "test_${{ matrix.type }}"
           token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
-          <%- if options['working-directory'] -%>
-          working-directory: "<%= options['working-directory'] %>"
-          <%- end -%>
-          <%- if options['test-command'] -%>
-          test-command: "<%= options['test-command'] %>"
-          <%- end -%>
+          working-directory: "foo/bar"
+          test-command: "bundle exec something"
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
     needs: test
     strategy:
       matrix:
-        os: <%= os %>
+        os: ["macos-latest", "ubuntu-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "<%= latest_supported_ruby_version %>"
+          ruby-version: "3.4.7"
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:

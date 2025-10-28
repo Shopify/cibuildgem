@@ -12,6 +12,10 @@ inputs:
   token:
     description: "TODO this is needed to install the Easy Compile gem from the GitHub repo. Can be removed "
     required: false
+  test-command:
+    description: "The command to run the test suite. By default Easy Compile will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
+    required: false
+    default: "easy_compile test"
 
 runs:
   using: "composite"
@@ -70,7 +74,7 @@ runs:
       if: "${{ startsWith(inputs.step, 'test') }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: easy_compile test # TODO This should be configurable
+      run: ${{ inputs.test-command }}
     - name: "Download tarball for platform"
       if: "${{ inputs.step == 'install' }}"
       uses: actions/download-artifact@v5

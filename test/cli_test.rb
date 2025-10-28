@@ -90,6 +90,38 @@ module EasyCompile
       FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
     end
 
+    def test_ci_template_when_passed_a_test_command
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+
+      expected_workflow = File.read("test/fixtures/expected_github_workflow_test_command.yml")
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["ci_template", "--test-command", "bundle exec something"])
+        end
+      end
+
+      assert(File.exist?(workflow_path))
+      assert_equal(expected_workflow, File.read(workflow_path))
+    ensure
+      FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
+    end
+
+    def test_ci_template_when_passed_a_test_command_and_workdir
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+
+      expected_workflow = File.read("test/fixtures/expected_github_workflow_test_and_workdir.yml")
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["ci_template", "--test-command", "bundle exec something", "--working-directory", "foo/bar"])
+        end
+      end
+
+      assert(File.exist?(workflow_path))
+      assert_equal(expected_workflow, File.read(workflow_path))
+    ensure
+      FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
+    end
+
     def test_release
       FileUtils.touch("tmp/foo.gem")
       FileUtils.touch("tmp/bar.gem")
