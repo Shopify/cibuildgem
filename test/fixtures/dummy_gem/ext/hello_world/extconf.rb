@@ -2,4 +2,6 @@
 
 require "mkmf"
 
+$LDFLAGS << " -s -pipe"
+
 create_makefile("hello_world")
