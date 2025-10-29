@@ -84,7 +84,7 @@ module EasyCompile
         ext.cross_compile = true
       end
 
-      disable_shared if darwin?
+      disable_shared
     ensure
       self.binary_name = nil
     end
