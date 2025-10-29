@@ -61,9 +61,14 @@ module EasyCompile
         instance.binary_name = name
       end
 
+      Object.define_method(:create_rust_makefile) do |name, *args|
+        instance.binary_name = name
+      end
+
       yield
     ensure
       Object.remove_method(:create_makefile)
+      Object.remove_method(:create_rust_makefile)
     end
 
     def define_task(path)
