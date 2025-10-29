@@ -66,7 +66,7 @@ end
 
 ### Supported platforms/Ruby versions
 
-|         | MacOS Intel  | MacOS ARM | Windows x64 | Linux GNU x86_64|Linux AARCH64 |
+|         | MacOS Intel  | MacOS ARM | Windows x64 UCRT | Linux GNU x86_64|Linux AARCH64 |
 |---------|------------- | --------- | ------------|-----------------|-----------------|
 | Ruby 3.0| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
 | Ruby 3.1| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
