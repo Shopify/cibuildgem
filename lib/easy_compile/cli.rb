@@ -93,7 +93,7 @@ module EasyCompile
     method_option "test-command", type: "string", required: false, desc: "The test command to run. Defaults to running `bundle exec rake test` and `bundle exec rake spec`."
     def ci_template
       # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
-      os = ["macos-latest", "ubuntu-latest"] # Just this for now because the CI takes too long otherwise.
+      os = ["macos-latest", "ubuntu-22.04"] # Just this for now because the CI takes too long otherwise.
 
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)

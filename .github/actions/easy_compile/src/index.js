@@ -73,7 +73,7 @@ function rubyBuilderURL(rubyVersion) {
   let platform = os.platform();
 
   if (platform == "linux") {
-    platform = "ubuntu-24.04"; // Not great but this is a quick workaround
+    platform = "ubuntu-22.04"; // Not great but this is a quick workaround
   }
 
   return `${rubyReleasesUrl}/ruby-${rubyVersion}/ruby-${rubyVersion}-${platform}-${os.arch()}.tar.gz`;
