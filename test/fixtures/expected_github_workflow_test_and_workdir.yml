@@ -13,7 +13,7 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
+        os: ["macos-latest", "ubuntu-22.04"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
@@ -36,7 +36,7 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
+        os: ["macos-latest", "ubuntu-22.04"]
         rubies: ["3.4.7", "3.3.9", "3.2.9", "3.1.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
@@ -62,7 +62,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
+        os: ["macos-latest", "ubuntu-22.04"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"

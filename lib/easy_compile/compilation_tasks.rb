@@ -84,7 +84,7 @@ module EasyCompile
         ext.cross_compile = true
       end
 
-      disable_shared if darwin?
+      disable_shared unless Gem.win_platform?
     ensure
       self.binary_name = nil
     end
@@ -106,9 +106,13 @@ module EasyCompile
       makefile_tasks.each do |task|
         task.enhance do
           makefile_content = File.read(task.name)
-          makefile_content.sub!(/(LIBRUBYARG_SHARED = )(?:-l\$\(RUBY_SO_NAME\))(.*)/, '\1\2')
+          makefile_content.match(/LIBRUBYARG_SHARED = (.*)/) do |match|
+            shared_flags = match[1].split(" ")
+            shared_flags.reject! { |flag| flag == "-l$(RUBY_SO_NAME)" }
+            makefile_content.gsub!(/(LIBRUBYARG_SHARED = ).*/, "\\1#{shared_flags.join(' ')}")
 
-          File.write(task.name, makefile_content)
+            File.write(task.name, makefile_content)
+          end
         end
       end
     end

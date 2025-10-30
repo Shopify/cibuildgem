@@ -14,14 +14,14 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Install gperf"
         if: ${{ matrix.os == 'windows-latest' }}
         run: choco install gperf
       - name: "Install gperf"
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
         run: sudo apt-get -qy install gperf
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -43,7 +43,7 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
         rubies: ["3.4.7", "3.1.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
@@ -68,7 +68,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest", "windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
