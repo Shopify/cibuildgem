@@ -30,7 +30,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "compile"
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
@@ -59,7 +58,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "test_${{ matrix.type }}"
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
@@ -82,7 +80,6 @@ jobs:
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           step: "install"
   release:
     permissions:
@@ -102,4 +99,3 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "release"
-          token: ${{ secrets.GITHUB_TOKEN  }}

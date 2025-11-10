@@ -1,3 +1,4 @@
 Gemfile.lock
+Gemfile_no_rake.lock
 lib/*.bundle
 tmp/

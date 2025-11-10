@@ -28,7 +28,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "compile"
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/date"
   test:
     timeout-minutes: 20
@@ -53,7 +52,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "test_${{ matrix.type }}"
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/date"
   install:
     timeout-minutes: 5
@@ -71,7 +69,6 @@ jobs:
       - name: "Run easy compile"
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
-          token: ${{ secrets.EASY_COMPILE }} # TODO Remove this before publishing the gem
           step: "install"
   release:
     permissions:
@@ -91,4 +88,3 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
         with:
           step: "release"
-          token: ${{ secrets.GITHUB_TOKEN  }}
