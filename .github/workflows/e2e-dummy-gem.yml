@@ -21,7 +21,6 @@ jobs:
         uses: "./.github/actions/easy_compile"
         with:
           step: "compile"
-          token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: "test/fixtures/dummy_gem"
   test:
     timeout-minutes: 20
@@ -46,7 +45,6 @@ jobs:
         uses: "./.github/actions/easy_compile"
         with:
           step: "test_${{ matrix.type }}"
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/dummy_gem"
   install:
     timeout-minutes: 5
@@ -66,5 +64,4 @@ jobs:
       - name: "Run easy compile"
         uses: "./.github/actions/easy_compile"
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           step: "install"
