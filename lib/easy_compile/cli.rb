@@ -129,7 +129,7 @@ module EasyCompile
 
     def run_rake_tasks!(*tasks)
       all_tasks = tasks.join(" ")
-      rakelibdir = File.expand_path("tasks", __dir__)
+      rakelibdir = [File.expand_path("tasks", __dir__), "rakelib"].join(File::PATH_SEPARATOR)
       rake_compiler_path = Gem.loaded_specs["rake-compiler"].full_require_paths
       rake_specs = Gem.loaded_specs["rake"]
       rake_executable = rake_specs.bin_file("rake")
