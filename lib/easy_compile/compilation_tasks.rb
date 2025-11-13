@@ -57,8 +57,10 @@ module EasyCompile
 
       instance = self
 
+      previous_create_makefile = method(:create_makefile)
       Object.define_method(:create_makefile) do |name, *args|
         instance.binary_name = name
+        previous_create_makefile.call(name, *args)
       end
 
       Object.define_method(:create_rust_makefile) do |name, *args|
