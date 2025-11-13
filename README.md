@@ -25,6 +25,13 @@ As noted by @flavorjoes, this toolchain works great but it's complex and brittle
 > [!NOTE]
 > Easy Compile is for now not able to compile projects that needs to link on external libraries. Unless the project vendors those libraries or uses [mini_portile](https://github.com/flavorjones/mini_portile).
 
+> [!IMPORTANT]
+> Repositories hosted on GitHub organization that don't belong to Shopify can't be tested at the moment. This is a temporary limitation that will be lifted
+> once we opensource this tool and publish its associated GitHub action.
+>
+> You can either fork the repo inside the shopify-playground org or you can ping me (@edouard-chin) and I'll help you set it up.
+
+
 ### How to use it
 
 While Easy Compile is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
