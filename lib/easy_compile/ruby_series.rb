@@ -25,9 +25,13 @@ module EasyCompile
       end
     end
 
-    def versions_to_test_agaist(requirements)
-      latest_rubies.select do |ruby_version|
+    def versions_to_test_against(requirements)
+      selected_rubies = latest_rubies.select do |ruby_version|
         requirements.satisfied_by?(ruby_version)
+      end.reverse
+
+      selected_rubies.map do |version|
+        version.segments.tap(&:pop).join('.')
       end
     end
 

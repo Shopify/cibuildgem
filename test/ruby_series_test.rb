@@ -50,14 +50,14 @@ module EasyCompile
     def test_versions_to_test_against
       requirements = Gem::Requirement.new("~> 3.4")
 
-      assert_equal(["3.4.7"], RubySeries.versions_to_test_agaist(requirements).map(&:to_s))
+      assert_equal(["3.4"], RubySeries.versions_to_test_against(requirements).map(&:to_s))
     end
 
     def test_versions_to_test_against_bis
       requirements = Gem::Requirement.new(">= 3.1")
-      expected = ["3.4.7", "3.3.9", "3.2.9", "3.1.7"]
+      expected = ["3.1", "3.2", "3.3", "3.4"]
 
-      assert_equal(expected, RubySeries.versions_to_test_agaist(requirements).map(&:to_s))
+      assert_equal(expected, RubySeries.versions_to_test_against(requirements).map(&:to_s))
     end
   end
 end
