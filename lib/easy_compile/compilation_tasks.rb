@@ -3,11 +3,11 @@
 require "bundler"
 require "rubygems/package_task"
 require "rake/extensiontask"
+require_relative "create_makefile_finder"
 
 module EasyCompile
   class CompilationTasks
     attr_reader :gemspec, :native, :create_packaging_task, :extension_task
-    attr_accessor :binary_name
 
     def initialize(create_packaging_task = false, gemspec = nil)
       @gemspec  = Bundler.load_gemspec(gemspec || find_gemspec)
@@ -17,10 +17,9 @@ module EasyCompile
     end
 
     def setup
-      with_mkmf_monkey_patch do
-        gemspec.extensions.each do |path|
-          define_task(path)
-        end
+      gemspec.extensions.each do |path|
+        binary_name = parse_extconf(path)
+        define_task(path, binary_name)
       end
 
       setup_packaging if create_packaging_task
@@ -52,46 +51,21 @@ module EasyCompile
       end
     end
 
-    def with_mkmf_monkey_patch
-      require "mkmf"
-
-      instance = self
-
-      previous_create_makefile = method(:create_makefile)
-      Object.define_method(:create_makefile) do |name, *args|
-        instance.binary_name = name
-        previous_create_makefile.call(name, *args)
-      end
-
-      Object.define_method(:create_rust_makefile) do |name, *args|
-        instance.binary_name = name
-      end
-
-      yield
-    ensure
-      Object.remove_method(:create_makefile)
-      Object.remove_method(:create_rust_makefile)
-    end
-
-    def define_task(path)
-      require File.expand_path(path)
-
+    def define_task(path, binary_name)
       @extension_task = Rake::ExtensionTask.new do |ext|
         ext.name = File.basename(binary_name)
         ext.config_script = File.basename(path)
         ext.ext_dir = File.dirname(path)
-        ext.lib_dir = binary_lib_dir if binary_lib_dir
+        ext.lib_dir = binary_lib_dir(binary_name) if binary_lib_dir(binary_name)
         ext.gem_spec = gemspec
         ext.cross_platform = normalized_platform
         ext.cross_compile = true
       end
 
       disable_shared unless Gem.win_platform?
-    ensure
-      self.binary_name = nil
     end
 
-    def binary_lib_dir
+    def binary_lib_dir(binary_name)
       dir = File.dirname(binary_name)
       return if dir == "."
 
@@ -136,6 +110,13 @@ module EasyCompile
         Your gem has no native extention defined in its gemspec.
         This tool can't be used on pure Ruby gems.
       EOM
+    end
+
+    def parse_extconf(path)
+      visitor = CreateMakefileFinder.new
+      Prism.parse_file(path).value.accept(visitor)
+
+      visitor.binary_name
     end
   end
 end

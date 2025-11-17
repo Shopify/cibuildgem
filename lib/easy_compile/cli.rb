@@ -134,7 +134,8 @@ module EasyCompile
       rake_specs = Gem.loaded_specs["rake"]
       rake_executable = rake_specs.bin_file("rake")
       rake_path = rake_specs.full_require_paths
-      load_paths = (rake_compiler_path + rake_path).join(File::PATH_SEPARATOR)
+      prism_path = Gem.loaded_specs["prism"].full_require_paths
+      load_paths = (rake_compiler_path + rake_path + prism_path).join(File::PATH_SEPARATOR)
 
       system({ "RUBYLIB" => load_paths }, "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir}", exception: true)
     end

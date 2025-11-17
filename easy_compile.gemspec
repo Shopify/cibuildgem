@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rake-compiler"
   spec.add_dependency "thor"
+  spec.add_dependency "prism"
 end
