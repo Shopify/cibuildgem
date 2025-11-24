@@ -75,11 +75,11 @@ end
 
 |         | MacOS Intel  | MacOS ARM | Windows x64 UCRT | Linux GNU x86_64|Linux AARCH64 |
 |---------|------------- | --------- | ------------|-----------------|-----------------|
-| Ruby 3.0| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
-| Ruby 3.1| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
-| Ruby 3.2| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
-| Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
-| Ruby 3.4| 🟢           | 🟢        | 🟢          | 🟢             | 🟠 (Not tested) |
+| Ruby 3.0| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
+| Ruby 3.1| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
+| Ruby 3.2| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
+| Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
+| Ruby 3.4| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 
 ## 🧪 Development
 
