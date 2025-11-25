@@ -35,7 +35,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "compile"
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/date"
   test:
     timeout-minutes: 30
@@ -60,7 +59,6 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           working-directory: "test/fixtures/date"
   install:
     timeout-minutes: 5
@@ -78,7 +76,6 @@ jobs:
       - name: "Run cibuildgem"
         uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           step: "install"
   release:
     permissions:
@@ -98,4 +95,3 @@ jobs:
         uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "release"
-          token: ${{ secrets.GITHUB_TOKEN  }}
