@@ -1,5 +1,5 @@
 > [!NOTE]
-> **This tool is currently in active development.** The base functionalities work but we are working on adding more feature and polishing the overall experience.
+> **This tool is currently in active development.** We are very much looking for your feedback feedback.
 
 ## 🗒️ Preambule
 
@@ -25,20 +25,13 @@ As noted by @flavorjoes, this toolchain works great but it's complex and brittle
 > [!NOTE]
 > cibuildgem is for now not able to compile projects that needs to link on external libraries. Unless the project vendors those libraries or uses [mini_portile](https://github.com/flavorjones/mini_portile).
 
-> [!IMPORTANT]
-> Repositories hosted on GitHub organization that don't belong to Shopify can't be tested at the moment. This is a temporary limitation that will be lifted
-> once we opensource this tool and publish its associated GitHub action.
->
-> You can either fork the repo inside the shopify-playground org or you can ping me (@edouard-chin) and I'll help you set it up.
-
-
 ### How to use it
 
 While cibuildgem is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
 
-1. Install cibuildgem: `git clone https://github.com/shopify-playground/edouard-playground`, `cd edouard-playground && rake install`
+1. Install cibuildgem: `gem install cibuildgem`
 2. Generate the workflow: `cd` in your gem's folder and run `cibuildgem ci_template`
-3. Commit the `.github/gem-compile.yaml` file.
+3. Commit the `.github/workflows/cibuildgem.yaml` file.
 
 ### Triggering the workflow
 
@@ -75,7 +68,6 @@ end
 
 |         | MacOS Intel  | MacOS ARM | Windows x64 UCRT | Linux GNU x86_64|Linux AARCH64 |
 |---------|------------- | --------- | ------------|-----------------|-----------------|
-| Ruby 3.0| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 | Ruby 3.1| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 | Ruby 3.2| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 | Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
@@ -84,5 +76,3 @@ end
 ## 🧪 Development
 
 If you'd like to run a end-to-end test, the `date` gem is vendored in this project. You can trigger a manual run to do the whole compile, test, install dance from the GitHub action menu.
-
-<img width="1350" height="225" alt="Image" src="https://github.com/user-attachments/assets/e34946d8-aff2-4aac-92c0-108f1d5beda0" />
