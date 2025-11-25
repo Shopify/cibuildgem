@@ -5,8 +5,8 @@ require_relative "lib/cibuildgem/version"
 Gem::Specification.new do |spec|
   spec.name = "cibuildgem"
   spec.version = Cibuildgem::VERSION
-  spec.authors = ["Edouard CHIN"]
-  spec.email = ["chin.edouard@gmail.com"]
+  spec.authors = ["Shopify"]
+  spec.email = ["rails@shopify.com"]
 
   spec.summary = "Add a summary later"
   spec.description = "Add a description laster"
