@@ -1,4 +1,4 @@
-name: "Package gems with precompiled binaries"
+name: "Package and release gems with precompiled binaries"
 on:
   workflow_dispatch:
     inputs:
