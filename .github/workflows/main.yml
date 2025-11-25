@@ -33,7 +33,7 @@ jobs:
         run: "bundle install"
       - name: "Compile when target has rake as dependency"
         working-directory: "test/fixtures/dummy_gem"
-        run: "easy_compile compile"
+        run: "cibuildgem compile"
       - name: "Bundle install on target gem"
         working-directory: "test/fixtures/dummy_gem"
         run: "bundle install"
@@ -41,6 +41,6 @@ jobs:
           BUNDLE_GEMFILE: "Gemfile_no_rake"
       - name: "Compile when target gem doesn't have rake as dependency"
         working-directory: "test/fixtures/dummy_gem"
-        run: "easy_compile compile"
+        run: "cibuildgem compile"
         env:
           BUNDLE_GEMFILE: "Gemfile_no_rake"

@@ -23,8 +23,8 @@ jobs:
         with:
           ruby-version: "3.1.7"
           bundler-cache: true
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "compile"
   test:
@@ -45,8 +45,8 @@ jobs:
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
   install:
@@ -62,8 +62,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "install"
   release:
@@ -80,7 +80,7 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "release"

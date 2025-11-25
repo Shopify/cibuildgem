@@ -2,6 +2,6 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift("#{__dir__}/../lib")
-require "easy_compile"
+require "cibuildgem"
 
-EasyCompile::CLI.start(ARGV)
+Cibuildgem::CLI.start(ARGV)

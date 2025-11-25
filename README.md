@@ -20,10 +20,10 @@ It uses a cross compilation approach by periodically building docker images for 
 
 As noted by @flavorjoes, this toolchain works great but it's complex and brittle compared to the more simple process of compiling on the target platform.
 
-## 💻 Easy Compile
+## 💻 cibuildgem
 
 > [!NOTE]
-> Easy Compile is for now not able to compile projects that needs to link on external libraries. Unless the project vendors those libraries or uses [mini_portile](https://github.com/flavorjones/mini_portile).
+> cibuildgem is for now not able to compile projects that needs to link on external libraries. Unless the project vendors those libraries or uses [mini_portile](https://github.com/flavorjones/mini_portile).
 
 > [!IMPORTANT]
 > Repositories hosted on GitHub organization that don't belong to Shopify can't be tested at the moment. This is a temporary limitation that will be lifted
@@ -34,10 +34,10 @@ As noted by @flavorjoes, this toolchain works great but it's complex and brittle
 
 ### How to use it
 
-While Easy Compile is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
+While cibuildgem is generally **not** meant to be used locally, it provides a command to generate the right GitHub workflow for your project:
 
-1. Install Easy Compile: `git clone https://github.com/shopify-playground/edouard-playground`, `cd edouard-playground && rake install`
-2. Generate the workflow: `cd` in your gem's folder and run `easy_compile ci_template`
+1. Install cibuildgem: `git clone https://github.com/shopify-playground/edouard-playground`, `cd edouard-playground && rake install`
+2. Generate the workflow: `cd` in your gem's folder and run `cibuildgem ci_template`
 3. Commit the `.github/gem-compile.yaml` file.
 
 ### Triggering the workflow
@@ -52,7 +52,7 @@ Once pushed in your repository **default** branch, the workflow that we just gen
 
 ### Changes to make in your gem to support precompiled binaries
 
-Due to the RubyGems specification, we can't release a gem with precompiled binaries for a specific Ruby version. Because the Ruby ABI is incompatible between minor versions, Rake Compiler (the tool underneath Easy Compile), compiles the binary for every minor Ruby versions your gem supports. All those binaries will be packaged in the gem (called a fat gem) in different folder such as `3.0/date.so`, `3.1/date.so` etc...
+Due to the RubyGems specification, we can't release a gem with precompiled binaries for a specific Ruby version. Because the Ruby ABI is incompatible between minor versions, Rake Compiler (the tool underneath cibuildgem), compiles the binary for every minor Ruby versions your gem supports. All those binaries will be packaged in the gem (called a fat gem) in different folder such as `3.0/date.so`, `3.1/date.so` etc...
 At runtime, your gem need to require the right binary based on the running ruby version.
 
 ```ruby

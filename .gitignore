@@ -5,4 +5,4 @@
 /doc/
 /pkg/
 /spec/reports/
-/.github/actions/easy_compile/node_modules
+/.github/actions/cibuildgem/node_modules

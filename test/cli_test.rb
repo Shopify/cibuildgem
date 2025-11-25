@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-module EasyCompile
+module Cibuildgem
   class CLITest < Minitest::Test
     def setup
       super
@@ -59,7 +59,7 @@ module EasyCompile
     end
 
     def test_ci_template
-      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/cibuildgem.yaml"
 
       expected_workflow = File.read("test/fixtures/expected_github_workflow.yml")
       Dir.chdir("test/fixtures/dummy_gem") do
@@ -75,7 +75,7 @@ module EasyCompile
     end
 
     def test_ci_template_when_passed_a_working_directory
-      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/cibuildgem.yaml"
 
       expected_workflow = File.read("test/fixtures/expected_github_workflow_working_dir.yml")
       Dir.chdir("test/fixtures/dummy_gem") do
@@ -91,7 +91,7 @@ module EasyCompile
     end
 
     def test_ci_template_when_passed_a_test_command
-      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/cibuildgem.yaml"
 
       expected_workflow = File.read("test/fixtures/expected_github_workflow_test_command.yml")
       Dir.chdir("test/fixtures/dummy_gem") do
@@ -107,7 +107,7 @@ module EasyCompile
     end
 
     def test_ci_template_when_passed_a_test_command_and_workdir
-      workflow_path = "test/fixtures/dummy_gem/.github/workflows/easy-compile.yaml"
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/cibuildgem.yaml"
 
       expected_workflow = File.read("test/fixtures/expected_github_workflow_test_and_workdir.yml")
       Dir.chdir("test/fixtures/dummy_gem") do
@@ -163,7 +163,7 @@ module EasyCompile
 
       assert_equal(<<~MSG, out)
         Couldn't find a gemspec in the current directory.
-        Make sure to run any easy_compile commands in the root of your gem folder.
+        Make sure to run any cibuildgem commands in the root of your gem folder.
       MSG
     end
 

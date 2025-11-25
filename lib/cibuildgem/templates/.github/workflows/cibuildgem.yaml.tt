@@ -26,8 +26,8 @@ jobs:
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "compile"
           <%- if options['working-directory'] -%>
@@ -54,8 +54,8 @@ jobs:
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
           <%- if options['working-directory'] -%>
@@ -77,8 +77,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "<%= latest_supported_ruby_version %>"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "install"
   release:
@@ -95,7 +95,7 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "release"
