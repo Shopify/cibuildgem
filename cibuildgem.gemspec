@@ -8,9 +8,16 @@ Gem::Specification.new do |spec|
   spec.authors = ["Shopify"]
   spec.email = ["rails@shopify.com"]
 
-  spec.summary = "Add a summary later"
-  spec.description = "Add a description laster"
-  spec.homepage = "https://github.com"
+  spec.summary = "Assist developers to distrute gems with precompiled binaries."
+  spec.description = <<~MSG
+    Gems with native extensions are the main bottleneck for a user when running `bundle install`.
+    This gem aims to provide the Ruby community an easy to opt-in and quick way to distribute their
+    gems with precompiled binaries.
+
+    This toolchain works with a native CI based compilation approach using GitHub actions. It piggyback on
+    top of popular tools in the Ruby ecosystem that maintainers are used to such as Rake Compiler and ruby/setup-ruby.
+  MSG
+  spec.homepage = "https://github.com/shopify/cibuildwheel"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
