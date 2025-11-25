@@ -2,9 +2,9 @@
 
 require_relative "../compilation_tasks"
 
-task = EasyCompile::CompilationTasks.new(!Rake::Task.task_defined?(:package))
+task = Cibuildgem::CompilationTasks.new(!Rake::Task.task_defined?(:package))
 
-task "easy_compile:setup" do
+task "cibuildgem:setup" do
   Rake.application.instance_variable_get(:@tasks).delete_if do |name, _|
     name == "native:#{task.gemspec.name}:#{task.normalized_platform}"
   end

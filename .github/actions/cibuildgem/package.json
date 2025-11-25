@@ -1,7 +1,7 @@
 {
-  "name": "easy_compile",
+  "name": "cibuildgem",
   "version": "1.0.0",
-  "description": "A companion GitHub action for easy_compile.",
+  "description": "A companion GitHub action for the cibuildgem ruby tool.",
   "main": "index.js",
   "repository": "https://github.com/rails/cool-stuff-fun-time",
   "scripts": {

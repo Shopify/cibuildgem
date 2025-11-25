@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module EasyCompile
+module Cibuildgem
   module RubySeries
     extend self
 

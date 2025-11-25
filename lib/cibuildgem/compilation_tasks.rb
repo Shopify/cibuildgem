@@ -5,7 +5,7 @@ require "rubygems/package_task"
 require "rake/extensiontask"
 require_relative "create_makefile_finder"
 
-module EasyCompile
+module Cibuildgem
   class CompilationTasks
     attr_reader :gemspec, :native, :create_packaging_task, :extension_task
 
@@ -99,7 +99,7 @@ module EasyCompile
 
       raise GemspecError, <<~EOM
         Couldn't find a gemspec in the current directory.
-        Make sure to run any easy_compile commands in the root of your gem folder.
+        Make sure to run any cibuildgem commands in the root of your gem folder.
       EOM
     end
 

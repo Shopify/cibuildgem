@@ -3,7 +3,7 @@
 require "thor"
 require "rake/extensiontask"
 
-module EasyCompile
+module Cibuildgem
   class CLI < Thor
     include Thor::Actions
 
@@ -25,12 +25,12 @@ module EasyCompile
       to the compilation.
     MSG
     def compile
-      run_rake_tasks!("easy_compile:setup", :compile)
+      run_rake_tasks!("cibuildgem:setup", :compile)
     end
 
     desc "package", "Compile and package a 'fat gem'.", hide: true
     long_desc <<~MSG
-      This command should normally run on CI, using the EasyCompile workflow. It will not work locally unless
+      This command should normally run on CI, using the cibuildgem workflow. It will not work locally unless
       the environment is properly setup.
 
       Based on a gem's gemspec, create a tailored-made Rake Compiler task to create two gems:
@@ -44,12 +44,12 @@ module EasyCompile
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
 
-      run_rake_tasks!("easy_compile:setup", :cross, :native, :gem)
+      run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
     end
 
     desc "test", "Run the test suites of the target gem"
     long_desc <<~EOM
-      EasyCompile will run the test suite of the gem. It either expects a `spec` or `test` task defined.
+      cibuildgem will run the test suite of the gem. It either expects a `spec` or `test` task defined.
     EOM
     def test
       run_rake_tasks!(:test)
@@ -57,7 +57,7 @@ module EasyCompile
 
     desc "copy_from_staging_to_lib", "Copy the staging binary. For internal usage.", hide: true
     def copy_from_staging_to_lib
-      run_rake_tasks!("easy_compile:setup", "copy:stage:lib")
+      run_rake_tasks!("cibuildgem:setup", "copy:stage:lib")
     end
 
     desc "clean", "Cleanup temporary compilation artifacts."
@@ -68,7 +68,7 @@ module EasyCompile
       to cleanup by adding files to the vanilla CLEAN rake list.
     MSG
     def clean
-      run_rake_tasks!("easy_compile:setup", :clean)
+      run_rake_tasks!("cibuildgem:setup", :clean)
     end
 
     desc "clobber", "Remove compiled binaries."
@@ -79,7 +79,7 @@ module EasyCompile
       to remove by adding files to the vanilla CLOBBER rake list.
     MSG
     def clobber
-      run_rake_tasks!("easy_compile:setup", :clobber)
+      run_rake_tasks!("cibuildgem:setup", :clobber)
     end
 
     desc "ci_template", "Generate CI template files."

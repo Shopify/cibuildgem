@@ -31,8 +31,8 @@ jobs:
           ruby-version: "3.1.7"
           bundler-cache: true
           working-directory: "test/fixtures/date"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "compile"
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
@@ -56,8 +56,8 @@ jobs:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
           working-directory: "test/fixtures/date"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
@@ -75,8 +75,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           token: ${{ secrets.GITHUB_TOKEN }} # TODO Remove this before publishing the gem
           step: "install"
@@ -94,8 +94,8 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "shopify-playground/edouard-playground/.github/actions/easy_compile@main"
+      - name: "Run cibuildgem"
+        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
         with:
           step: "release"
           token: ${{ secrets.GITHUB_TOKEN  }}

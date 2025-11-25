@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-module EasyCompile
+module Cibuildgem
   class RubySeriesTest < Minitest::Test
     def test_latest_version_for_requirements
       requirements = Gem::Requirement.new("~> 3.4")

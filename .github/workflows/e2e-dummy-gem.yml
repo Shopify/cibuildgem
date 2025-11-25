@@ -17,8 +17,8 @@ jobs:
           ruby-version: "3.1.7"
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
-      - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+      - name: "Run cibuildgem"
+        uses: "./.github/actions/cibuildgem"
         with:
           step: "compile"
           working-directory: "test/fixtures/dummy_gem"
@@ -41,8 +41,8 @@ jobs:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
-      - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+      - name: "Run cibuildgem"
+        uses: "./.github/actions/cibuildgem"
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/dummy_gem"
@@ -61,7 +61,7 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           ruby-version: "3.4.7"
-      - name: "Run easy compile"
-        uses: "./.github/actions/easy_compile"
+      - name: "Run cibuildgem"
+        uses: "./.github/actions/cibuildgem"
         with:
           step: "install"

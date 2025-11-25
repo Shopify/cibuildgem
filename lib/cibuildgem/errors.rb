@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module EasyCompile
+module Cibuildgem
   GemspecError = Class.new(StandardError)
 end

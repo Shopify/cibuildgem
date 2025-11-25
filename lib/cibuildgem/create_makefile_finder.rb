@@ -2,7 +2,7 @@
 
 require "prism"
 
-module EasyCompile
+module Cibuildgem
   class CreateMakefileFinder < Prism::Visitor
     attr_reader :binary_name
 
