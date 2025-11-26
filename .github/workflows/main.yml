@@ -5,7 +5,7 @@ jobs:
   lint:
     timeout-minutes: 5
     name: "Ruby linter"
-    runs-on: ubuntu-latest
+    runs-on: shopify-ubuntu-latest
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -18,7 +18,7 @@ jobs:
   test:
     timeout-minutes: 10
     name: "Testing the gem"
-    runs-on: ubuntu-latest
+    runs-on: shopify-ubuntu-latest
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
@@ -33,7 +33,7 @@ jobs:
   gem_deps:
     timeout-minutes: 10
     name: "Ensure CLI is compatible no matter the gem dependencies"
-    runs-on: ubuntu-latest
+    runs-on: shopify-ubuntu-latest
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
