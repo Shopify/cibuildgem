@@ -24,7 +24,7 @@ jobs:
           ruby-version: "3.1.7"
           bundler-cache: true
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "compile"
   test:
@@ -46,7 +46,7 @@ jobs:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
           test-command: "bundle exec something"
@@ -64,7 +64,7 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
   release:
@@ -82,6 +82,6 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "release"

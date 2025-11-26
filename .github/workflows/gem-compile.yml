@@ -32,7 +32,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "compile"
           working-directory: "test/fixtures/date"
@@ -56,7 +56,7 @@ jobs:
           bundler-cache: true
           working-directory: "test/fixtures/date"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/date"
@@ -74,7 +74,7 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
   release:
@@ -92,6 +92,6 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "release"

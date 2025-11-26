@@ -27,7 +27,7 @@ jobs:
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "compile"
           <%- if options['working-directory'] -%>
@@ -55,7 +55,7 @@ jobs:
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "test_${{ matrix.type }}"
           <%- if options['working-directory'] -%>
@@ -78,7 +78,7 @@ jobs:
         with:
           ruby-version: "<%= latest_supported_ruby_version %>"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
   release:
@@ -96,6 +96,6 @@ jobs:
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
-        uses: "shopify-playground/edouard-playground/.github/actions/cibuildgem@main"
+        uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "release"
