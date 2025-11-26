@@ -10,7 +10,7 @@ module Cibuildgem
     attr_reader :gemspec, :native, :create_packaging_task, :extension_task
 
     def initialize(create_packaging_task = false, gemspec = nil)
-      @gemspec  = Bundler.load_gemspec(gemspec || find_gemspec)
+      @gemspec = Bundler.load_gemspec(gemspec || find_gemspec)
       verify_gemspec!
 
       @create_packaging_task = create_packaging_task
@@ -85,7 +85,7 @@ module Cibuildgem
           makefile_content.match(/LIBRUBYARG_SHARED = (.*)/) do |match|
             shared_flags = match[1].split(" ")
             shared_flags.reject! { |flag| flag == "-l$(RUBY_SO_NAME)" }
-            makefile_content.gsub!(/(LIBRUBYARG_SHARED = ).*/, "\\1#{shared_flags.join(' ')}")
+            makefile_content.gsub!(/(LIBRUBYARG_SHARED = ).*/, "\\1#{shared_flags.join(" ")}")
 
             File.write(task.name, makefile_content)
           end

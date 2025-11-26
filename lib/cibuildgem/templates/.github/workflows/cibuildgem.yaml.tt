@@ -13,7 +13,7 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: <%= os %>
+        os: <%= @os %>
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
@@ -21,7 +21,7 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "<%= runtime_version_for_compilation %>"
+          ruby-version: "<%= @runtime_version_for_compilation %>"
           bundler-cache: true
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
@@ -39,8 +39,8 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: <%= os %>
-        rubies: <%= ruby_versions_for_testing %>
+        os: <%= @os %>
+        rubies: <%= @ruby_versions_for_testing %>
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
     steps:
@@ -70,13 +70,13 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: <%= os %>
+        os: <%= @os %>
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "<%= latest_supported_ruby_version %>"
+          ruby-version: "<%= @latest_supported_ruby_version %>"
       - name: "Run cibuildgem"
         uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:

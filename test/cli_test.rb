@@ -168,8 +168,6 @@ module Cibuildgem
     end
 
     def test_when_cli_runs_in_project_with_no_native_extension
-      out = nil
-
       out, _ = capture_subprocess_io do
         raise_instead_of_exit do
           CLI.start(["print_ruby_cc_version"])

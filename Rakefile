@@ -13,4 +13,4 @@ rescue LoadError
   # it the GitHub action clones the repo and runs `rake install`, without running a `bundle install` first.
 end
 
-task default: :test
+task(default: :test)

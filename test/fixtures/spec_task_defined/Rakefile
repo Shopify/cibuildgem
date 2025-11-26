@@ -1,3 +1,5 @@
-task :spec do
+# frozen_string_literal: true
+
+task(:spec) do
   print "The spec task was called."
 end

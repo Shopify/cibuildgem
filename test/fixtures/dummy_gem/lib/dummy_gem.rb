@@ -3,7 +3,7 @@
 require_relative "dummy_gem/version"
 
 begin
-  ruby_version = /(\d+\.\d+)/.match(::RUBY_VERSION)
+  ruby_version = /(\d+\.\d+)/.match(RUBY_VERSION)
 
   require "#{ruby_version}/hello_world"
 rescue LoadError
