@@ -9,8 +9,10 @@ module Cibuildgem
 
     source_root(File.expand_path("templates", __dir__))
 
-    def self.exit_on_failure?
-      true
+    class << self
+      def exit_on_failure?
+        true
+      end
     end
 
     desc "compile", "Compile a gem's native extension."
@@ -92,13 +94,12 @@ module Cibuildgem
     method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specify where."
     method_option "test-command", type: "string", required: false, desc: "The test command to run. Defaults to running `bundle exec rake test` and `bundle exec rake spec`."
     def ci_template
-      # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
-      os = ["macos-latest", "ubuntu-22.04"] # Just this for now because the CI takes too long otherwise.
-
       ruby_requirements = compilation_task.gemspec.required_ruby_version
-      latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
-      runtime_version_for_compilation = RubySeries.runtime_version_for_compilation(ruby_requirements)
-      ruby_versions_for_testing = RubySeries.versions_to_test_against(ruby_requirements)
+      # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
+      @os = ["macos-latest", "ubuntu-22.04"] # Just this for now because the CI takes too long otherwise.
+      @latest_supported_ruby_version = RubySeries.latest_version_for_requirements(ruby_requirements)
+      @runtime_version_for_compilation = RubySeries.runtime_version_for_compilation(ruby_requirements)
+      @ruby_versions_for_testing = RubySeries.versions_to_test_against(ruby_requirements)
 
       directory(".github", context: instance_eval("binding"))
     end
@@ -117,12 +118,12 @@ module Cibuildgem
     desc "print_ruby_cc_version", "Output the cross compile ruby version needed for the gem. For internal usage", hide: true
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def print_ruby_cc_version
-      print compilation_task.ruby_cc_version
+      print(compilation_task.ruby_cc_version)
     end
 
     desc "normalized_platform", "The platform name for compilation purposes", hide: true
     def print_normalized_platform
-      print compilation_task.normalized_platform
+      print(compilation_task.normalized_platform)
     end
 
     private
@@ -143,7 +144,7 @@ module Cibuildgem
     def compilation_task
       @compilation_task ||= CompilationTasks.new(false)
     rescue GemspecError => e
-      print e.message
+      print(e.message)
 
       Kernel.exit(false)
     end

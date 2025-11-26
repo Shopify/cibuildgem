@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rake-compiler"
-  spec.add_dependency "thor"
-  spec.add_dependency "prism"
+  spec.add_dependency("prism")
+  spec.add_dependency("rake-compiler")
+  spec.add_dependency("thor")
 end

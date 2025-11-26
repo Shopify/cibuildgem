@@ -31,7 +31,7 @@ module Cibuildgem
       end.reverse
 
       selected_rubies.map do |version|
-        version.segments.tap(&:pop).join('.')
+        version.segments.tap(&:pop).join(".")
       end
     end
 

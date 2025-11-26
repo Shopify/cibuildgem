@@ -1,3 +1,5 @@
-task :test do
+# frozen_string_literal: true
+
+task(:test) do
   print "The test task was called."
 end

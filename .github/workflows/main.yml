@@ -2,6 +2,19 @@ name: "Run the test suite"
 on: push
 
 jobs:
+  lint:
+    timeout-minutes: 5
+    name: "Ruby linter"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v5"
+      - name: "Setup ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          bundler-cache: true
+      - name: "Run rubocop"
+        run: "bundle exec rubocop"
   test:
     timeout-minutes: 10
     name: "Testing the gem"
@@ -9,6 +22,8 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
+      - name: "Remove the Gemfile.lock"
+        run: "rm -rf Gemfile.lock"
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"
         with:

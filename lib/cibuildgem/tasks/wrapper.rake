@@ -22,7 +22,7 @@ end
 
 unless Rake::Task.task_defined?(:test)
   task(:test) do
-    raise(RuntimeError, "Don't know how to build task 'test'") unless Rake::Task.task_defined?(:spec)
+    raise("Don't know how to build task 'test'") unless Rake::Task.task_defined?(:spec)
 
     Rake::Task[:spec].invoke
   end

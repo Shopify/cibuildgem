@@ -2,9 +2,9 @@
 
 Gem::Specification.new do |spec|
   spec.name = "foo"
-  spec.version = '0.0.1'
-  spec.authors = ["John Doe"]
-  spec.email = ["john@example.com"]
+  spec.version = "0.0.1"
+  spec.authors = ["Shopify"]
+  spec.email = ["rails@shopify.com"]
 
   spec.summary = "Not important"
   spec.description = "Not important"
