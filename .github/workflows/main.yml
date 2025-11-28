@@ -11,6 +11,6 @@ jobs:
       - name: "Checkout code"
         uses: "actions/checkout@v5"
         with:
-          working-directory: "tmp"
+          path: "tmp"
       - name: "Create a docker container"
         run: 'docker container run -w /var -v "tmp:/var" amd64/ruby:3.4.7 rake install'
