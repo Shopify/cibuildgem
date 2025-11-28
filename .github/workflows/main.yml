@@ -6,4 +6,4 @@ jobs:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
-      - "docker"
+      run: "docker"
