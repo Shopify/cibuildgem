@@ -7,4 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
-        run: "docker"
+        uses: "actions/checkout@v5"
+        with:
+          working-directory: "tmp"
+      - name: "Create a docker container"
+        run: 'docker container run -w /var -v "tmp:/var" arm64v8/ruby:3.4.7 rake install'
