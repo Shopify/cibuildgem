@@ -13,4 +13,4 @@ jobs:
         with:
           path: "tmp"
       - name: "Create a docker container"
-        run: 'docker container run -w /var -v "${{ github.workspace }}/tmp:/var" amd64/ruby:3.4.7 ls'
+        run: 'docker container run -w /var -v "${{ github.workspace }}/tmp:/var" amd64/ruby:3.4.7 rake install && cd test/fixtures/date/ && bundle install'
