@@ -6,6 +6,8 @@ jobs:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
+      - name: "Display arch"
+        run: "echo ${{ runner.arch }}"
       - name: "Checkout code"
         uses: "actions/checkout@v5"
         with:
