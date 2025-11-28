@@ -6,4 +6,5 @@ jobs:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
-      run: "docker"
+      - name: "Checkout code"
+        run: "docker"
