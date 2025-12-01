@@ -101,7 +101,7 @@ module Cibuildgem
       @runtime_version_for_compilation = RubySeries.runtime_version_for_compilation(ruby_requirements)
       @ruby_versions_for_testing = RubySeries.versions_to_test_against(ruby_requirements)
 
-      directory(".github", context: instance_eval("binding"))
+      directory("github", ".github", context: instance_eval("binding"))
     end
 
     desc "release", "Release the gem with precompiled binaries. For internal usage.", hide: true
