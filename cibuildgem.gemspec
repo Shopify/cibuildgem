@@ -23,9 +23,9 @@ Gem::Specification.new do |spec|
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com"
+  spec.metadata["source_code_uri"] = "https://github.com/shopify/cibuildwheel"
 
-  spec.files = Dir["{exe,lib,scripts}/**/*", "LICENSE.md", "README.md", "lib/cibuildgem/templates/.github/**/*"]
+  spec.files = Dir["{exe,lib}/**/*", "LICENSE.md", "README.md", "lib/cibuildgem/templates/.github/**/*"]
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
