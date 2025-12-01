@@ -1,7 +1,7 @@
 > [!NOTE]
 > **This tool is currently in active development.** We are very much looking for your feedback.
 
-## 🗒️ Preambule
+## 🗒️ Preamble
 
 #### The problem this tool tries to solve.
 
