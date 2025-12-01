@@ -1,5 +1,5 @@
 > [!NOTE]
-> **This tool is currently in active development.** We are very much looking for your feedback feedback.
+> **This tool is currently in active development.** We are very much looking for your feedback.
 
 ## 🗒️ Preambule
 
@@ -18,7 +18,7 @@ This tool modestly tries to follow the same approach by helping ruby maintainers
 Precompilation isn't new in the Ruby ecosystem and some maintainers have been releasing their gems with precompiled binaries to speedup the installation process since a while (e.g. [nokogiri](https://rubygems.org/gems/nokogiri), [grpc](https://rubygems.org/gems/grpc), [karafka-rdkafka](https://rubygems.org/gems/karafka-rdkafka)). One of the most popular tool that enables to precompile binaries for different platform is the great [rake-compiler-dock](https://github.com/rake-compiler/rake-compiler-dock) toolchain.
 It uses a cross compilation approach by periodically building docker images for various platforms and spinning up containers to compile the binaries.
 
-As noted by @flavorjoes, this toolchain works great but it's complex and brittle compared to the more simple process of compiling on the target platform.
+As noted by [@flavorjones](https://github.com/flavorjones), this toolchain works great but it's complex and brittle compared to the more simple process of compiling on the target platform.
 
 ## 💻 cibuildgem
 
