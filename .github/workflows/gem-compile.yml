@@ -24,9 +24,9 @@ jobs:
         if: ${{ matrix.os == 'shopify-ubuntu-22' }}
         run: sudo apt-get -qy install gperf
       - name: "Checkout code"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
       - name: "Setup Ruby"
-        uses: "ruby/setup-ruby@v1"
+        uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
           ruby-version: "3.1.7"
           bundler-cache: true
@@ -48,9 +48,9 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
       - name: "Setup Ruby"
-        uses: "ruby/setup-ruby@v1"
+        uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
@@ -70,7 +70,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
-        uses: "ruby/setup-ruby@v1"
+        uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
@@ -88,7 +88,7 @@ jobs:
     runs-on: "shopify-ubuntu-latest"
     steps:
       - name: "Setup Ruby"
-        uses: "ruby/setup-ruby@v1"
+        uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
           ruby-version: "3.4.7"
       - name: "Run cibuildgem"
