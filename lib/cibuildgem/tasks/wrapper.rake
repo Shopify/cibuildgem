@@ -2,7 +2,7 @@
 
 require_relative "../compilation_tasks"
 
-task = Cibuildgem::CompilationTasks.new(!Rake::Task.task_defined?(:package))
+task = Cibuildgem::CompilationTasks.new(!Rake::Task.task_defined?(:gem))
 
 task "cibuildgem:setup" do
   Rake.application.instance_variable_get(:@tasks).delete_if do |name, _|
