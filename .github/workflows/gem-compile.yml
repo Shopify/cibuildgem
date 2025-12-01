@@ -14,14 +14,14 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["macos-latest", "shopify-ubuntu-22", "shopify-windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Install gperf"
-        if: ${{ matrix.os == 'shopify-windows-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         run: choco install gperf
       - name: "Install gperf"
-        if: ${{ matrix.os == 'shopify-ubuntu-22' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
         run: sudo apt-get -qy install gperf
       - name: "Checkout code"
         uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
@@ -42,7 +42,7 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "shopify-ubuntu-22", "shopify-windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
         rubies: ["3.4.7", "3.1.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
@@ -66,7 +66,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: ["macos-latest", "shopify-ubuntu-22", "shopify-windows-latest"]
+        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
@@ -85,7 +85,7 @@ jobs:
     if: ${{ inputs.release }}
     name: "Release all gems with RubyGems"
     needs: install
-    runs-on: "shopify-ubuntu-latest"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
