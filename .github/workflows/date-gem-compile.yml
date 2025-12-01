@@ -1,4 +1,4 @@
-name: "Package and release gems with precompiled binaries"
+name: "Perform a end to end test on the date gem"
 on:
   workflow_dispatch:
     inputs:
