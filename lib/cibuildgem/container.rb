@@ -10,12 +10,19 @@ module Cibuildgem
       dockerfile = File.expand_path("../docker/Dockerfile", __FILE__)
       system("podman image build -t cibuildgem -f #{dockerfile}", exception: true)
 
-      puts ENV["RUNNER_TEMP"]
-      # system("podman container run -it -v /Users/edouard/Documents/rubies:/opt/rubies -v /Users/edouard/Documents/config.yml:/root/.rake-compiler/config.yml cibuildgem /bin/bash")
+      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c cibuildgem package")
     end
 
-    def cpu
-      Gem::Platform.local.cpu
+    private
+
+    def volumes_mount
+      mounts = [
+        "-v #{ENV['RUNNER_TEMP']}/rubies:/opt/rubies",
+        "-v #{Dir.home}/.rake-compiler/config.yml:/root/.rake-compiler/config.yml",
+        "-v #{Dir.pwd}:/project",
+      ]
+
+      mounts.join(" ")
     end
   end
 end

@@ -10,3 +10,5 @@ RUN unzip ruby-3.4.7.zip -d /opt/rubies
 RUN bash -c "source /usr/local/share/chruby/chruby.sh && chruby 3.4.7 && gem install cibuildgem"
 RUN echo "source /usr/local/share/chruby/chruby.sh" >> ~/.bashrc
 RUN echo "chruby 3.4.7" >> ~/.bashrc
+
+WORKDIR /project
