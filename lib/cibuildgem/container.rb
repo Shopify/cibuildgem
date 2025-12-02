@@ -10,6 +10,7 @@ module Cibuildgem
       dockerfile = File.expand_path("../docker/Dockerfile", __FILE__)
       system("podman image build -t cibuildgem -f #{dockerfile}", exception: true)
 
+      puts "The current directory is: #{Dir.pwd}"
       system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'cibuildgem package'")
     end
 
