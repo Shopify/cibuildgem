@@ -12,7 +12,7 @@ module Cibuildgem
 
       puts "The current directory is: #{Dir.pwd}"
       # system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'cibuildgem package'")
-      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'bundle config'")
+      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'ls -la -R'")
     end
 
     private
