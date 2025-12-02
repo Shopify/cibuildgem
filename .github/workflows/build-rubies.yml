@@ -5,20 +5,18 @@ jobs:
     runs-on: ubuntu-latest
     container: buildpack-deps:bullseye
     steps:
-        - name: Check something
-          run: gh
-        # - name: Update package source
-        #   run: apt-get update
-        # - name: Install ruby-install
-        #   run: |
-        #     curl -L https://github.com/postmodern/ruby-install/releases/download/v0.10.1/ruby-install-0.10.1.tar.gz -O
-        #     tar -xvzf ruby-install-0.10.1.tar.gz
-        #     cd ruby-install-0.10.1
-        #     make install
-        # - name: Install Ruby
-        #   run: 'ruby-install --rubies-dir /github/workspace 3.4.6 -- --disable-install-rdoc LDFLAGS="-s"'
-        # - name: Upload artifact
-        #   uses: actions/upload-artifact@v5
-        #   with:
-        #     name: ruby-3.4.6
-        #     path: /github/workspace
+        - name: Update package source
+          run: apt-get update
+        - name: Install ruby-install
+          run: |
+            curl -L https://github.com/postmodern/ruby-install/releases/download/v0.10.1/ruby-install-0.10.1.tar.gz -O
+            tar -xvzf ruby-install-0.10.1.tar.gz
+            cd ruby-install-0.10.1
+            make install
+        - name: Install Ruby
+          run: 'ruby-install --rubies-dir /github/workspace 3.3.8 -- --disable-install-rdoc LDFLAGS="-s"'
+        - name: Upload artifact
+          uses: actions/upload-artifact@v5
+          with:
+            name: ruby-3.3.8
+            path: /github/workspace
