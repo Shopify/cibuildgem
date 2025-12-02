@@ -14,9 +14,9 @@ jobs:
             cd ruby-install-0.10.1
             make install
         - name: Install Ruby
-          run: 'ruby-install --rubies-dir /github/workspace 3.3.8 -- --disable-install-rdoc LDFLAGS="-s"'
+          run: 'ruby-install --rubies-dir /github/workspace 3.4.7 -- --disable-install-rdoc LDFLAGS="-s"'
         - name: Upload artifact
           uses: actions/upload-artifact@v5
           with:
-            name: ruby-3.3.8
+            name: ruby-3.4.7
             path: /github/workspace
