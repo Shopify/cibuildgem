@@ -9,16 +9,19 @@ jobs:
           run: apt-get update
         - name: Create the rubies directory
           run: mkdir ~/.rubies
-        - name: Install ruby-install
-          run: |
-            curl -L https://github.com/postmodern/ruby-install/releases/download/v0.10.1/ruby-install-0.10.1.tar.gz -O
-            tar -xvzf ruby-install-0.10.1.tar.gz
-            cd ruby-install-0.10.1
-            make install
-        - name: Install Ruby
-          run: 'ruby-install --rubies-dir ~/.rubies 3.4.7 -- --disable-install-rdoc LDFLAGS="-s"'
+        - name: Touch
+          run: touch ~/.rubies/foo
+        # - name: Install ruby-install
+        #   run: |
+        #     curl -L https://github.com/postmodern/ruby-install/releases/download/v0.10.1/ruby-install-0.10.1.tar.gz -O
+        #     tar -xvzf ruby-install-0.10.1.tar.gz
+        #     cd ruby-install-0.10.1
+        #     make install
+        # - name: Install Ruby
+        #   run: 'ruby-install --rubies-dir ~/.rubies 3.4.7 -- --disable-install-rdoc LDFLAGS="-s"'
         - name: Upload artifact
           uses: actions/upload-artifact@v5
           with:
             name: ruby-3.4.7
             path: ~/.rubies
+            include-hidden-files: true
