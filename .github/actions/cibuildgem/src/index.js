@@ -12,7 +12,8 @@ async function run(workingDirectory) {
   await downloadRubies(ccRubies.split(':'))
   setupRakeCompilerConfig(workingDirectory)
 
-  let config = fs.readFileSync(`${os.homedir()}/.rake-compiler`, { encoding: 'utf-8' })
+  let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
+  let config = fs.readFileSync(rbConfigPath, { encoding: 'utf-8' })
   console.log(config)
 }
 
