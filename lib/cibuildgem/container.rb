@@ -10,7 +10,7 @@ module Cibuildgem
       dockerfile = File.expand_path("../docker/Dockerfile", __FILE__)
       system("podman image build -t cibuildgem -f #{dockerfile}", exception: true)
 
-      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c cibuildgem package")
+      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'cibuildgem package'")
     end
 
     private
