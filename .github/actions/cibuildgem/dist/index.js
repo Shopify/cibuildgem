@@ -28243,7 +28243,7 @@ function setupRakeCompilerConfig(workingDirectory) {
     let rbConfigName = getRbConfigName(rubyPlatform, rubyVersion)
 
     if (rubyVersion != currentRubyVersion) {
-      fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${normalized_path(path)}\n`, { flag: 'a+' })
+      fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${normalizedPath(path)}\n`, { flag: 'a+' })
     }
   })
 }
