@@ -11,6 +11,9 @@ async function run(workingDirectory) {
 
   await downloadRubies(ccRubies.split(':'))
   setupRakeCompilerConfig(workingDirectory)
+
+  let config = fs.readFileSync(`${os.homedir()}/.rake-compiler`, { encoding: 'utf-8' })
+  console.log(config)
 }
 
 async function downloadRubies(rubies) {
@@ -39,7 +42,7 @@ function setupRakeCompilerConfig(workingDirectory) {
     let rbConfigName = getRbConfigName(rubyPlatform, rubyVersion)
 
     if (rubyVersion != currentRubyVersion) {
-      fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${path}\n`, { flag: 'a+' })
+      fs.writeFileSync(rbConfigPath, `${rbConfigName}: ${normalized_path(path)}\n`, { flag: 'a+' })
     }
   })
 }
@@ -48,12 +51,20 @@ function rubiesPath() {
   return path.join(process.env['RUNNER_TEMP'], 'rubies');
 }
 
+function normalizedPath(path) {
+  if (!isLinux()) {
+    return path;
+  }
+
+  path.replace(rubiesPath, "/opt/rubies")
+}
+
 function getRbConfigName(rubyPlatform, rubyVersion) {
   return `rbconfig-${rubyPlatform}-${rubyVersion}`
 }
 
-function isDarwin() {
-  return os.platform() == "darwin";
+function isLinux() {
+  return os.platform() == "linux";
 }
 
 function isWindows() {
@@ -63,6 +74,8 @@ function isWindows() {
 function getDownloadURL(rubyVersion) {
   if (isWindows()) {
     return windowsInstallerURL(rubyVersion);
+  } else if (isLinux()) {
+    return linuxRubies(rubyVersion);
   } else {
     return rubyBuilderURL(rubyVersion);
   }
@@ -77,6 +90,10 @@ function rubyBuilderURL(rubyVersion) {
   }
 
   return `${rubyReleasesUrl}/ruby-${rubyVersion}/ruby-${rubyVersion}-${platform}-${os.arch()}.tar.gz`;
+}
+
+function linuxRuby(rubyVersion) {
+  `https://github.com/Shopify/cibuildgem/releases/download/ruby-builder/ruby-${rubyVersion}.zip`
 }
 
 function windowsInstallerURL(rubyVersion) {
