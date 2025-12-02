@@ -57,7 +57,7 @@ function normalizedPath(path) {
     return path;
   }
 
-  return path.replace(rubiesPath(), "/opt/rubies")
+  return path.replace(rubiesPath(), "/opt/cross-rubies")
 }
 
 function getRbConfigName(rubyPlatform, rubyVersion) {

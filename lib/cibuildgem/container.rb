@@ -17,7 +17,7 @@ module Cibuildgem
 
     def volumes_mount
       mounts = [
-        "-v #{ENV['RUNNER_TEMP']}/rubies:/opt/rubies",
+        "-v #{ENV['RUNNER_TEMP']}/rubies:/opt/cross-rubies",
         "-v #{Dir.home}/.rake-compiler/config.yml:/root/.rake-compiler/config.yml",
         "-v #{Dir.pwd}:/project",
       ]
