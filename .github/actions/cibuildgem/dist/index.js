@@ -28276,7 +28276,7 @@ function getDownloadURL(rubyVersion) {
   if (isWindows()) {
     return windowsInstallerURL(rubyVersion);
   } else if (isLinux()) {
-    return linuxRubies(rubyVersion);
+    return linuxRuby(rubyVersion);
   } else {
     return rubyBuilderURL(rubyVersion);
   }
