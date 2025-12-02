@@ -28294,7 +28294,7 @@ function rubyBuilderURL(rubyVersion) {
 }
 
 function linuxRuby(rubyVersion) {
-  return `https://github.com/Shopify/cibuildgem/releases/download/ruby-builder/ruby-${rubyVersion}.zip`
+  return `https://github.com/Shopify/cibuildgem/releases/download/ruby-builder/ruby-${rubyVersion}.tar.gz`
 }
 
 function windowsInstallerURL(rubyVersion) {
