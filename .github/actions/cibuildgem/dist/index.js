@@ -28224,15 +28224,15 @@ async function downloadRubies(rubies) {
     let tarball = await tc.downloadTool(downloadUrl);
 
     if (isWindows()) {
-      await tc.extract7z(tarball, `${rubiesPath()}/${version}`, '7z');
+      await tc.extract7z(tarball, `${rubiesPath()}`, '7z');
     } else {
-      await tc.extractTar(tarball, `${rubiesPath()}/${version}`);
+      await tc.extractTar(tarball, `${rubiesPath()}`);
     }
   }
 }
 
 function setupRakeCompilerConfig(workingDirectory) {
-  let rubiesRbConfig = fs.globSync(`${rubiesPath()}/*/*/lib/ruby/*/*/rbconfig.rb`)
+  let rubiesRbConfig = fs.globSync(`${rubiesPath()}/*/lib/ruby/*/*/rbconfig.rb`)
   let currentRubyVersion = cp.execSync('ruby -v', { encoding: 'utf-8' }).match(/^ruby (\d\.\d\.\d)/)[1]
   let rbConfigPath = path.join(os.homedir(), ".rake-compiler", "config.yml")
   let rubyPlatform = cp.execSync('cibuildgem print_normalized_platform', { cwd: workingDirectory, encoding: 'utf-8' })
@@ -28240,7 +28240,7 @@ function setupRakeCompilerConfig(workingDirectory) {
   fs.mkdirSync(`${os.homedir()}/.rake-compiler`)
 
   rubiesRbConfig.forEach((path) => {
-    let rubyVersion = path.match(/rubies.(\d\.\d\.\d)/)[1]
+    let rubyVersion = path.match(/ruby-(\d\.\d\.\d)/)[1]
     let rbConfigName = getRbConfigName(rubyPlatform, rubyVersion)
 
     if (rubyVersion != currentRubyVersion) {
