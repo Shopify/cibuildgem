@@ -1,0 +1,15 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: buildpack-deps:bullseye
+    steps:
+        - name: Update package source
+          run: apt-get update
+        - name: Install ruby-install
+          run: |
+            curl -L https://github.com/postmodern/ruby-install/releases/download/v0.10.1/ruby-install-0.10.1.tar.gz -O
+            tar -xvzf ruby-install-0.10.1.tar.gz
+            ruby-install-0.10.1
+            make install
