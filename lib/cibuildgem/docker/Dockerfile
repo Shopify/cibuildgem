@@ -7,5 +7,6 @@ RUN cd chruby-0.3.9 && ./scripts/setup.sh
 RUN mkdir -p /opt/rubies
 RUN curl -L https://github.com/Shopify/cibuildgem/releases/download/ruby-builder/ruby-3.4.7.zip -O
 RUN unzip ruby-3.4.7.zip -d /opt/rubies
+RUN bash -c "source /usr/local/share/chruby/chruby.sh && chruby 3.4.7 && gem install cibuildgem"
 RUN echo "source /usr/local/share/chruby/chruby.sh" >> ~/.bashrc
 RUN echo "chruby 3.4.7" >> ~/.bashrc

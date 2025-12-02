@@ -2,6 +2,7 @@
 
 require "thor"
 require "rake/extensiontask"
+require_relative "container"
 
 module Cibuildgem
   class CLI < Thor
@@ -27,6 +28,9 @@ module Cibuildgem
       to the compilation.
     MSG
     def compile
+
+      # return run_in_container if Gem::Platform.local.os == "linux"
+
       run_rake_tasks!("cibuildgem:setup", :compile)
     end
 
@@ -44,6 +48,8 @@ module Cibuildgem
     MSG
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. Defaults to the gemspec from the current working directory."
     def package
+      return run_in_container
+
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
 
       run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
@@ -147,6 +153,10 @@ module Cibuildgem
       print(e.message)
 
       Kernel.exit(false)
+    end
+
+    def run_in_container
+      Container.execute("cibuildgem package", runtime_ruby: RUBY_VERSION)
     end
   end
 end
