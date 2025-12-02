@@ -11,8 +11,8 @@ module Cibuildgem
       system("podman image build -t cibuildgem -f #{dockerfile}", exception: true)
 
       puts "The current directory is: #{Dir.pwd}"
-      # system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'cibuildgem package'")
-      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'ls -la -R'")
+      system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'bundle env'")
+      # system("podman container run --rm -it #{volumes_mount} cibuildgem bash -i -c 'ls -la -R'")
     end
 
     private
