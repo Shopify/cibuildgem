@@ -11,4 +11,6 @@ RUN bash -c "source /usr/local/share/chruby/chruby.sh && chruby 3.4.7 && gem ins
 RUN echo "source /usr/local/share/chruby/chruby.sh" >> ~/.bashrc
 RUN echo "chruby 3.4.7" >> ~/.bashrc
 
+ENV BUNDLE_PATH="vendor/bundle"
+ENV BUNDLE_APP_CONFIG=
 WORKDIR /project
