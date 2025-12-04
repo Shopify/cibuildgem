@@ -19,7 +19,8 @@ runs:
   steps:
     - name: Install cibuildgem
       shell: bash
-      run: "gem install cibuildgem"
+      run: ${{ github.repository == 'Shopify/cibuildgem' && 'rake install' || 'gem install cibuildgem' }}
+      working-directory: "${{ github.action_path }}"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
