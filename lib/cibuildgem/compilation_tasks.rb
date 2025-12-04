@@ -60,6 +60,7 @@ module Cibuildgem
         ext.gem_spec = gemspec
         ext.cross_platform = normalized_platform
         ext.cross_compile = true
+        ext.no_native = true
       end
 
       disable_shared unless Gem.win_platform?
