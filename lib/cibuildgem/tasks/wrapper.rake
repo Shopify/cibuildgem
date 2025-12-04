@@ -6,6 +6,9 @@ task = Cibuildgem::CompilationTasks.new(!Rake::Task.task_defined?(:gem))
 
 task "cibuildgem:setup" do
   task.setup
+
+  task(:native) do
+  end
 end
 
 task "copy:stage:lib" do
