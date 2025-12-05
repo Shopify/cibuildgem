@@ -72,6 +72,7 @@ jobs:
         with:
           step: "install"
   release:
+    environment: release
     permissions:
       id-token: write
       contents: read
