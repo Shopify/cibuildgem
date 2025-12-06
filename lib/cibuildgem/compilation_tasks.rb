@@ -17,6 +17,8 @@ module Cibuildgem
     end
 
     def setup
+      Rake::ExtensionTask.enable!
+
       gemspec.extensions.each do |path|
         binary_name = parse_extconf(path)
         define_task(path, binary_name)
