@@ -137,8 +137,13 @@ module Cibuildgem
       rake_path = rake_specs.full_require_paths
       prism_path = Gem.loaded_specs["prism"].full_require_paths
       load_paths = (rake_compiler_path + rake_path + prism_path).join(File::PATH_SEPARATOR)
+      patch = File.expand_path("../extension_patch.rb", __FILE__)
 
-      system({ "RUBYLIB" => load_paths }, "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir}", exception: true)
+      system(
+        { "RUBYLIB" => load_paths },
+        "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir} -r #{patch}",
+        exception: true,
+      )
     end
 
     def compilation_task

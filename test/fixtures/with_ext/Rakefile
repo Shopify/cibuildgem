@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+require "rake/extensiontask"
+
+gemspec = Gem::Specification.load("foo.gemspec")
+Rake::ExtensionTask.new("foo", gemspec)
+
+raise "No rake task should have been defined" if Rake::Task.task_defined?(:native)
+
+exit(0)

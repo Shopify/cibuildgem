@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "English"
 
 module Cibuildgem
   class CLITest < Minitest::Test
@@ -212,6 +213,14 @@ module Cibuildgem
           end
         end
       end
+    end
+
+    def test_package_when_a_rakefile_defines_an_extension_task
+      Dir.chdir("test/fixtures/with_ext") do
+        CLI.start(["package"])
+      end
+
+      assert_predicate($CHILD_STATUS, :success?)
     end
 
     private
