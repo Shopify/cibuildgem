@@ -37,6 +37,7 @@ module Cibuildgem
 
     def cross_rubies
       [
+        Gem::Version.new("4.0.0"),
         Gem::Version.new("3.4.6"),
         Gem::Version.new("3.3.8"),
         Gem::Version.new("3.2.8"),
@@ -46,6 +47,7 @@ module Cibuildgem
 
     def latest_rubies
       [
+        Gem::Version.new("4.0.0"),
         Gem::Version.new("3.4.7"),
         Gem::Version.new("3.3.9"),
         Gem::Version.new("3.2.9"),

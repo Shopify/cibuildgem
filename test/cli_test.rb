@@ -148,7 +148,7 @@ module Cibuildgem
         end
       end
 
-      assert_equal("3.4.6:3.3.8:3.2.8:3.1.6", out)
+      assert_equal("4.0.0:3.4.6:3.3.8:3.2.8:3.1.6", out)
     end
 
     def test_when_cli_runs_in_project_with_no_gemspec
