@@ -13,7 +13,7 @@ module Cibuildgem
     def test_latest_version_for_requirements_bis
       requirements = Gem::Requirement.new("> 3")
 
-      assert_equal("3.4.7", RubySeries.latest_version_for_requirements(requirements).to_s)
+      assert_equal("4.0.0", RubySeries.latest_version_for_requirements(requirements).to_s)
     end
 
     def test_latest_version_for_requirements_multiple
@@ -42,7 +42,7 @@ module Cibuildgem
 
     def test_versions_to_compile_against_bis
       requirements = Gem::Requirement.new(">= 3.1")
-      expected = ["3.4.6", "3.3.8", "3.2.8", "3.1.6"]
+      expected = ["4.0.0", "3.4.6", "3.3.8", "3.2.8", "3.1.6"]
 
       assert_equal(expected, RubySeries.versions_to_compile_against(requirements).map(&:to_s))
     end
@@ -55,7 +55,7 @@ module Cibuildgem
 
     def test_versions_to_test_against_bis
       requirements = Gem::Requirement.new(">= 3.1")
-      expected = ["3.1", "3.2", "3.3", "3.4"]
+      expected = ["3.1", "3.2", "3.3", "3.4", "4.0"]
 
       assert_equal(expected, RubySeries.versions_to_test_against(requirements).map(&:to_s))
     end
