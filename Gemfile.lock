@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cibuildgem (0.1.4)
+    cibuildgem (0.2.0)
       prism
       rake-compiler
       thor
@@ -58,4 +58,4 @@ DEPENDENCIES
   rubocop-shopify
 
 BUNDLED WITH
-   4.0.3
+  4.0.3
