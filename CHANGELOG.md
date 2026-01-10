@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-01-09
+
+### Fixed
+
+- Gem that define a `test` rake task with a prerequisite `compile` task would make cibuildgem crash. This is now fixed.
+
 ## [0.2.0] - 2026-01-09
 
 ### Added
