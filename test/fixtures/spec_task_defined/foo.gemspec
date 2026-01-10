@@ -14,5 +14,5 @@ Gem::Specification.new do |spec|
 
   spec.files = []
   spec.require_paths = ["lib"]
-  spec.extensions = ["ext/foo.rb"]
+  spec.extensions = ["foo.rb"]
 end

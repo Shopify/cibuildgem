@@ -2,6 +2,7 @@
 
 require "thor"
 require "rake/extensiontask"
+require "prism"
 
 module Cibuildgem
   class CLI < Thor
@@ -54,7 +55,7 @@ module Cibuildgem
       cibuildgem will run the test suite of the gem. It either expects a `spec` or `test` task defined.
     EOM
     def test
-      run_rake_tasks!(:test)
+      run_rake_tasks!("cibuildgem:setup", :test)
     end
 
     desc "copy_from_staging_to_lib", "Copy the staging binary. For internal usage.", hide: true
