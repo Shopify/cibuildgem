@@ -92,6 +92,17 @@ module Cibuildgem
 
             File.write(task.name, makefile_content)
           end
+
+          makefile_content.match(/^ldflags\W+=(.*)/) do |match|
+            ldflags = match[1].split(" ")
+            next if ldflags.include?("-s")
+
+            ldflags << "-s"
+
+            makefile_content.gsub!(/^(ldflags\W+=)(.*)/, "\\1#{ldflags.join(" ")}")
+
+            File.write(task.name, makefile_content)
+          end
         end
       end
     end
