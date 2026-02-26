@@ -7,6 +7,8 @@ on:
         required: false
         type: boolean
         default: false
+env:
+  CIBUILDGEM: 1
 jobs:
   compile:
     timeout-minutes: 20
