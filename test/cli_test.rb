@@ -151,6 +151,20 @@ module Cibuildgem
       assert_equal("4.0.0:3.4.6:3.3.8:3.2.8:3.1.6", out)
     end
 
+    def test_print_ruby_cc_version_env_has_precedence
+      ENV["RUBY_CC_VERSION"] = "3.1:3.2"
+
+      out, _ = capture_subprocess_io do
+        Dir.chdir("test/fixtures/dummy_gem") do
+          CLI.start(["print_ruby_cc_version"])
+        end
+      end
+
+      assert_equal("3.1:3.2", out)
+    ensure
+      ENV.delete("RUBY_CC_VERSION")
+    end
+
     def test_when_cli_runs_in_project_with_no_gemspec
       out = nil
 

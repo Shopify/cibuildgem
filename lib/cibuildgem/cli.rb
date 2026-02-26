@@ -119,7 +119,7 @@ module Cibuildgem
     desc "print_ruby_cc_version", "Output the cross compile ruby version needed for the gem. For internal usage", hide: true
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. If the option is not passed, a gemspec file from the current working directory will be used."
     def print_ruby_cc_version
-      print(compilation_task.ruby_cc_version)
+      print(ENV["RUBY_CC_VERSION"] || compilation_task.ruby_cc_version)
     end
 
     desc "normalized_platform", "The platform name for compilation purposes", hide: true
