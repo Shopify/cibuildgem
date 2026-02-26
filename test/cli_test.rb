@@ -11,6 +11,12 @@ module Cibuildgem
       @dllext = RbConfig::MAKEFILE_CONFIG["DLEXT"]
     end
 
+    def teardown
+      ENV.delete("RUBY_CC_VERSION")
+
+      super
+    end
+
     def test_compile
       binary_path = "test/fixtures/dummy_gem/lib/hello_world.#{@dllext}"
 
