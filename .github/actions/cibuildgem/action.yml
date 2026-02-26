@@ -13,13 +13,21 @@ inputs:
     description: "The command to run the test suite. By default cibuildgem will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
     required: false
     default: "cibuildgem test"
+  version:
+    description: "The version of the cibuildgem ruby gem to use. Defaults to the latest version."
+    required: false
 
 runs:
   using: "composite"
   steps:
     - name: Install cibuildgem
       shell: bash
-      run: ${{ github.repository == 'Shopify/cibuildgem' && 'rake install' || 'gem install cibuildgem' }}
+      run: |-
+        ${{ case(
+          github.repository == 'Shopify/cibuildgem', 'rake install',
+          inputs.version != null, format('gem install cibuildgem -v {0}', inputs.version),
+          'gem install cibuildgem'
+        ) }}
       working-directory: "${{ github.action_path }}"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
