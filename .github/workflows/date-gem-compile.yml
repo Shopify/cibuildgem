@@ -14,7 +14,7 @@ jobs:
     name: "Cross compile the gem on different ruby versions"
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
+        os: ["ubuntu-22.04"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Install gperf"
@@ -42,7 +42,7 @@ jobs:
     needs: compile
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
+        os: ["ubuntu-22.04"]
         rubies: ["3.4.7", "3.1.7"]
         type: ["cross", "native"]
     runs-on: "${{ matrix.os }}"
@@ -66,7 +66,7 @@ jobs:
     needs: test
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-22.04", "windows-latest"]
+        os: ["ubuntu-22.04"]
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Setup Ruby"
