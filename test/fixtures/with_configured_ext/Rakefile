@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+require "rake/extensiontask"
+
+gemspec = Gem::Specification.load("foo.gemspec")
+Rake::ExtensionTask.new("foo", gemspec) do |t|
+  t.cross_config_options = ["foo", "bar"]
+end
+
+task :foo do
+  task = Cibuildgem::CompilationTasks.new(!Rake::Task.task_defined?(:gem))
+  task.setup
+
+  print task.extension_task.cross_config_options.join(" ")
+end
