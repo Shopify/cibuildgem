@@ -243,6 +243,18 @@ module Cibuildgem
       assert_predicate($CHILD_STATUS, :success?)
     end
 
+    def test_keep_the_extension_task_config_defined_by_the_gem
+      Dir.chdir("test/fixtures/with_configured_ext") do
+        cli = CLI.new
+
+        out, _ = capture_subprocess_io do
+          cli.send(:run_rake_tasks!, :foo)
+        end
+
+        assert_equal("foo bar", out)
+      end
+    end
+
     private
 
     def raise_instead_of_exit(&block)

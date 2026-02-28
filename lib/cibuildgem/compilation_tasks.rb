@@ -17,8 +17,6 @@ module Cibuildgem
     end
 
     def setup
-      Rake::ExtensionTask.enable!
-
       gemspec.extensions.each do |path|
         binary_name = parse_extconf(path)
         define_task(path, binary_name)
@@ -54,16 +52,19 @@ module Cibuildgem
     end
 
     def define_task(path, binary_name)
-      @extension_task = Rake::ExtensionTask.new do |ext|
-        ext.name = File.basename(binary_name)
-        ext.config_script = File.basename(path)
-        ext.ext_dir = File.dirname(path)
-        ext.lib_dir = binary_lib_dir(binary_name) if binary_lib_dir(binary_name)
-        ext.gem_spec = gemspec
-        ext.cross_platform = normalized_platform
-        ext.cross_compile = true
-        ext.no_native = true
-      end
+      @extension_task = Rake::ExtensionTask.current || Rake::ExtensionTask.new
+
+      @extension_task.name = File.basename(binary_name)
+      @extension_task.config_script = File.basename(path)
+      @extension_task.ext_dir = File.dirname(path)
+      @extension_task.lib_dir = binary_lib_dir(binary_name) if binary_lib_dir(binary_name)
+      @extension_task.gem_spec = gemspec
+      @extension_task.cross_platform = normalized_platform
+      @extension_task.cross_compile = true
+      @extension_task.no_native = true
+
+      Rake::ExtensionTask.enable!
+      @extension_task.define
 
       disable_shared unless Gem.win_platform?
     end
