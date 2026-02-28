@@ -8,11 +8,9 @@ CLEAN.include("**/*.o", "**/*.so", "**/*.bundle", "*.jar", "pkg", "tmp")
 
 extask = Rake::ExtensionTask.new("date") do |ext|
   ext.name = "date_core"
-  ext.lib_dir.sub!(%r[(?=/|\z)], "/#{RUBY_VERSION}/#{ext.platform}")
 end
 
 Rake::TestTask.new(:test) do |t|
-  t.libs << extask.lib_dir
   t.libs << "test/lib"
   t.ruby_opts << "-rhelper"
   t.test_files = FileList['test/**/test_*.rb']
