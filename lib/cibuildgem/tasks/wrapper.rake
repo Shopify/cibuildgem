@@ -12,11 +12,9 @@ task "cibuildgem:setup" do
 end
 
 task "copy:stage:lib" do
-  version = RUBY_VERSION.match(/(\d\.\d)/)[1]
-  dest = File.join(task.extension_task.lib_dir, version)
-  src = File.join("tmp", task.extension_task.cross_platform, "stage", dest)
+  src = File.join("tmp", task.extension_task.cross_platform, "stage")
 
-  cp_r(src, dest, remove_destination: true)
+  cp_r(Dir.glob("#{src}/*"), ".", remove_destination: true)
 end
 
 unless Rake::Task.task_defined?(:test)
