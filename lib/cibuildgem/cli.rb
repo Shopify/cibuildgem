@@ -3,6 +3,7 @@
 require "thor"
 require "rake/extensiontask"
 require "prism"
+require "open3"
 
 module Cibuildgem
   class CLI < Thor
@@ -112,7 +113,16 @@ module Cibuildgem
         pathname = Pathname(file)
         next if pathname.directory? || pathname.extname != ".gem"
 
-        Kernel.system("gem push #{file}", exception: true)
+        out, status = Open3.capture2e("gem push #{file}")
+        next if status.success?
+
+        if out =~ /Repushing of gem versions is not allowed/
+          puts "Gem #{file} already exists on RubyGems.org, skipping..."
+
+          next
+        end
+
+        raise out
       end
     end
 

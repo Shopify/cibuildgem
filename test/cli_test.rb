@@ -2,6 +2,7 @@
 
 require "test_helper"
 require "English"
+require "open3"
 
 module Cibuildgem
   class CLITest < Minitest::Test
@@ -129,18 +130,77 @@ module Cibuildgem
       FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
     end
 
-    def test_release
+    def test_release_succeeds
       FileUtils.touch("tmp/foo.gem")
       FileUtils.touch("tmp/bar.gem")
       FileUtils.touch("tmp/some_file")
 
+      status = Struct.new(:success?)
       gem_pushed = []
+      callable = proc do |gem_name|
+        gem_pushed << gem_name
 
-      Kernel.stub(:system, ->(gem, _) { gem_pushed << gem }) do
+        ["", status.new(true)]
+      end
+
+      Open3.stub(:capture2e, callable) do
         CLI.start(["release", "--glob", "tmp/*"])
       end
 
       assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+    ensure
+      FileUtils.rm_rf("tmp/foo.gem")
+      FileUtils.rm_rf("tmp/bar.gem")
+      FileUtils.rm_rf("tmp/some_file")
+    end
+
+    def test_release_when_gem_was_already_pushed
+      FileUtils.touch("tmp/foo.gem")
+      FileUtils.touch("tmp/bar.gem")
+      FileUtils.touch("tmp/some_file")
+
+      status = Struct.new(:success?)
+      gem_pushed = []
+      callable = proc do |gem_name|
+        gem_pushed << gem_name
+
+        if gem_name == "gem push tmp/bar.gem"
+          ["Repushing of gem versions is not allowed", status.new(false)]
+        else
+          ["", status.new(true)]
+        end
+      end
+
+      Open3.stub(:capture2e, callable) do
+        out, _ = capture_subprocess_io do
+          CLI.start(["release", "--glob", "tmp/*"])
+        end
+
+        assert_equal("Gem tmp/bar.gem already exists on RubyGems.org, skipping...\n", out)
+      end
+
+      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+    ensure
+      FileUtils.rm_rf("tmp/foo.gem")
+      FileUtils.rm_rf("tmp/bar.gem")
+      FileUtils.rm_rf("tmp/some_file")
+    end
+
+    def test_release_fails
+      FileUtils.touch("tmp/foo.gem")
+      FileUtils.touch("tmp/bar.gem")
+      FileUtils.touch("tmp/some_file")
+
+      status = Struct.new(:success?)
+      callable = proc do
+        ["Something went wrong", status.new(false)]
+      end
+
+      Open3.stub(:capture2e, callable) do
+        assert_raises(RuntimeError) do
+          CLI.start(["release", "--glob", "tmp/*"])
+        end
+      end
     ensure
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
