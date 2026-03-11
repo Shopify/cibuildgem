@@ -34,7 +34,7 @@ Here are some working examples on gem that have setup cibuildgem
 | [Heap Profiler](https://github.com/shopify/heap-profiler) | [CI Run](https://github.com/Shopify/heap-profiler/actions/runs/20996043558) | [Gem](https://rubygems.org/gems/heap-profiler/versions/0.8.0.rc1-x86_64-linux) |
 | [djb2](https://github.com/Shopify/djb2) | [CI Run](https://github.com/Shopify/djb2/actions/runs/22188688549) | [Gem](https://rubygems.org/gems/djb2/versions/0.1.1-x86_64-linux) |
 | [Blake3](https://github.com/Shopify/blake3-rb) | [CI Run](https://github.com/Shopify/blake3-rb/actions/runs/21253662535) | [Gem](https://rubygems.org/gems/blake3-rb/versions/1.5.6.rc1-x86_64-linux) |
-| [Raindrops (fork)](https://github.com/Edouard-chin/raindrops) | [CI Run](https://github.com/Edouard-chin/raindrops/actions/runs/22045845221) | [Gem](https://rubygems.org/gems/precompiled-raindrop) |
+| [Raindrops (fork)](https://github.com/Edouard-chin/raindrops) | [CI Run](https://github.com/Edouard-chin/raindrops/actions/runs/22045845221) | [Gem](https://rubygems.org/gems/precompiled-raindrops) |
 | [Stack Frames](https://github.com/Shopify/stack_frames) | [CI Run](https://github.com/Shopify/stack_frames/actions/runs/19969899178) | [Gem](https://rubygems.org/gems/stack_frames/versions/0.1.4-x86_64-linux) |
 
 ## Supported platforms/Ruby versions
