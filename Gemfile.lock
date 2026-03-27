@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cibuildgem (0.2.2)
+    cibuildgem (0.3.0)
       prism
       rake-compiler
       thor
