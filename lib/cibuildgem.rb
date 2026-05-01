@@ -4,7 +4,8 @@ require_relative "cibuildgem/version"
 require_relative "cibuildgem/errors"
 
 module Cibuildgem
-  autoload :CLI,              "cibuildgem/cli"
-  autoload :CompilationTasks, "cibuildgem/compilation_tasks"
-  autoload :RubySeries,       "cibuildgem/ruby_series"
+  autoload :CLI,               "cibuildgem/cli"
+  autoload :CompilationTasks,  "cibuildgem/compilation_tasks"
+  autoload :ContainerPackager, "cibuildgem/container_packager"
+  autoload :RubySeries,        "cibuildgem/ruby_series"
 end
