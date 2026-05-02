@@ -232,30 +232,30 @@ module Cibuildgem
     end
 
     def test_when_cli_runs_in_project_with_no_gemspec
-      out = nil
+      err = nil
 
       Dir.chdir("lib") do
-        out, _ = capture_subprocess_io do
+        _, err = capture_subprocess_io do
           raise_instead_of_exit do
             CLI.start(["print_ruby_cc_version"])
           end
         end
       end
 
-      assert_equal(<<~MSG, out)
+      assert_equal(<<~MSG, err)
         Couldn't find a gemspec in the current directory.
         Make sure to run any cibuildgem commands in the root of your gem folder.
       MSG
     end
 
     def test_when_cli_runs_in_project_with_no_native_extension
-      out, _ = capture_subprocess_io do
+      _, err = capture_subprocess_io do
         raise_instead_of_exit do
           CLI.start(["print_ruby_cc_version"])
         end
       end
 
-      assert_equal(<<~MSG, out)
+      assert_equal(<<~MSG, err)
         Your gem has no native extention defined in its gemspec.
         This tool can't be used on pure Ruby gems.
       MSG
@@ -301,6 +301,100 @@ module Cibuildgem
       end
 
       assert_predicate($CHILD_STATUS, :success?)
+    end
+
+    def test_container_package
+      received = {}
+      packager = Object.new
+      packager.define_singleton_method(:package) { received[:package_called] = true }
+
+      factory = ->(**kwargs) {
+        received[:kwargs] = kwargs
+        packager
+      }
+
+      ContainerPackager.stub(:new, factory) do
+        CLI.start(["container_package", "--working-directory", "foo/bar", "--container-image", "example/image"])
+      end
+
+      assert(received[:package_called])
+      assert_equal("foo/bar", received[:kwargs][:working_directory])
+      assert_nil(received[:kwargs][:gemspec])
+      assert_equal("example/image", received[:kwargs][:container_image])
+    end
+
+    def test_container_exec
+      received = {}
+      packager = Object.new
+      packager.define_singleton_method(:run) do |command:, prepare_bundle:|
+        received[:command] = command
+        received[:prepare_bundle] = prepare_bundle
+      end
+
+      factory = ->(**kwargs) {
+        received[:kwargs] = kwargs
+        packager
+      }
+
+      ContainerPackager.stub(:new, factory) do
+        CLI.start([
+          "container_exec",
+          "--working-directory",
+          "foo/bar",
+          "--container-image",
+          "example/image",
+          "--command",
+          "echo ok",
+          "--bundle-install",
+        ])
+      end
+
+      assert_equal("foo/bar", received[:kwargs][:working_directory])
+      assert_nil(received[:kwargs][:gemspec])
+      assert_equal("example/image", received[:kwargs][:container_image])
+      assert_equal("echo ok", received[:command])
+      assert(received[:prepare_bundle])
+    end
+
+    def test_container_exec_without_a_command_explains_the_two_input_paths
+      _, err = capture_subprocess_io do
+        raise_instead_of_exit do
+          CLI.start(["container_exec"])
+        end
+      end
+
+      assert_match(/No container command was provided/, err)
+      assert_match(/--command/, err)
+      assert_match(/CIBUILDGEM_CONTAINER_COMMAND/, err)
+    end
+
+    def test_container_exec_falls_back_to_env_var_for_the_command
+      ENV["CIBUILDGEM_CONTAINER_COMMAND"] = "echo from-env"
+      received = {}
+      packager = Object.new
+      packager.define_singleton_method(:run) do |command:, prepare_bundle:|
+        received[:command] = command
+        received[:prepare_bundle] = prepare_bundle
+      end
+
+      ContainerPackager.stub(:new, ->(**) { packager }) do
+        CLI.start(["container_exec"])
+      end
+
+      assert_equal("echo from-env", received[:command])
+      refute(received[:prepare_bundle])
+    ensure
+      ENV.delete("CIBUILDGEM_CONTAINER_COMMAND")
+    end
+
+    def test_errors_go_to_stderr_with_a_trailing_newline
+      _, err = capture_subprocess_io do
+        raise_instead_of_exit do
+          CLI.start(["container_exec"])
+        end
+      end
+
+      assert(err.end_with?("\n"), "expected stderr message to end with a newline, got #{err.inspect}")
     end
 
     def test_keep_the_extension_task_config_defined_by_the_gem
