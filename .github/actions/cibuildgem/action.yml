@@ -16,6 +16,9 @@ inputs:
   version:
     description: "The version of the cibuildgem ruby gem to use. Defaults to the latest version."
     required: false
+  linux-container-image:
+    description: "Override the Linux container image used for containerized Linux steps. Defaults to the rake-compiler-dock image for the target platform."
+    required: false
 
 runs:
   using: "composite"
@@ -24,21 +27,29 @@ runs:
       shell: bash
       run: |-
         ${{ case(
-          github.repository == 'Shopify/cibuildgem', 'rake install',
           inputs.version != null, format('gem install cibuildgem -v {0}', inputs.version),
+          github.repository == 'Shopify/cibuildgem', 'rake install',
           'gem install cibuildgem'
         ) }}
       working-directory: "${{ github.action_path }}"
     - name: "Setup Rake Compiler"
-      if: "${{ inputs.step == 'compile' }}"
+      if: "${{ inputs.step == 'compile' && runner.os != 'Linux' }}"
       uses: actions/github-script@v8
       with:
         script: |
           const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/index.js`);
           const { run } = await import(url.href)
           await run('${{ inputs.working-directory }}')
+    - name: "Package in Linux container"
+      if: "${{ inputs.step == 'compile' && runner.os == 'Linux' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
+        CIBUILDGEM_VERSION: "${{ inputs.version }}"
+      run: cibuildgem container_package
     - name: Package
-      if: "${{ inputs.step == 'compile' }}"
+      if: "${{ inputs.step == 'compile' && runner.os != 'Linux' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: cibuildgem package
@@ -59,8 +70,19 @@ runs:
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
         path: "${{ inputs.working-directory }}"
+    - name: "Execute cross tests in Linux container"
+      if: "${{ inputs.step == 'test_cross' && runner.os == 'Linux' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
+        CIBUILDGEM_VERSION: "${{ inputs.version }}"
+        CIBUILDGEM_CONTAINER_COMMAND: |-
+          cibuildgem copy_from_staging_to_lib
+          ${{ inputs.test-command }}
+      run: cibuildgem container_exec --bundle-install
     - name: "Copy staging binary to the libdir"
-      if: "${{ inputs.step == 'test_cross' }}"
+      if: "${{ inputs.step == 'test_cross' && runner.os != 'Linux' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: cibuildgem copy_from_staging_to_lib
@@ -70,7 +92,7 @@ runs:
       shell: bash
       run: cibuildgem compile
     - name: "Execute the tests"
-      if: "${{ startsWith(inputs.step, 'test') }}"
+      if: "${{ startsWith(inputs.step, 'test') && !(inputs.step == 'test_cross' && runner.os == 'Linux') }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: ${{ inputs.test-command }}
@@ -79,14 +101,25 @@ runs:
       uses: actions/download-artifact@v5
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
+        path: "${{ inputs.working-directory }}"
+    - name: "Install gems in Linux container"
+      if: "${{ inputs.step == 'install' && runner.os == 'Linux' }}"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
+        CIBUILDGEM_VERSION: "${{ inputs.version }}"
+        CIBUILDGEM_CONTAINER_COMMAND: "gem install pkg/*.gem"
+      run: cibuildgem container_exec
     - name: "Download all gems"
       if: "${{ inputs.step == 'release' }}"
       uses: actions/download-artifact@v5
       with:
         merge-multiple: true
     - name: "Install gems"
-      if: "${{ inputs.step == 'install' }}"
+      if: "${{ inputs.step == 'install' && runner.os != 'Linux' }}"
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: gem install pkg/*.gem
     - name: "Configure RubyGems crendentials in preparation for publishing"
       if: "${{ inputs.step == 'release' }}"

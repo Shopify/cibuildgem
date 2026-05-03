@@ -35,6 +35,9 @@ jobs:
           <%- if options['working-directory'] -%>
           working-directory: "<%= options['working-directory'] %>"
           <%- end -%>
+          <%- if options['linux-container-image'] -%>
+          linux-container-image: "<%= options['linux-container-image'] %>"
+          <%- end -%>
   test:
     timeout-minutes: 20
     name: "Run the test suite"
@@ -66,6 +69,9 @@ jobs:
           <%- if options['test-command'] -%>
           test-command: "<%= options['test-command'] %>"
           <%- end -%>
+          <%- if options['linux-container-image'] -%>
+          linux-container-image: "<%= options['linux-container-image'] %>"
+          <%- end -%>
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
@@ -83,6 +89,9 @@ jobs:
         uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
+          <%- if options['linux-container-image'] -%>
+          linux-container-image: "<%= options['linux-container-image'] %>"
+          <%- end -%>
   release:
     environment: release
     permissions:
