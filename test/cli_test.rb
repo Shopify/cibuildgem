@@ -130,6 +130,22 @@ module Cibuildgem
       FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
     end
 
+    def test_ci_template_propagates_linux_container_image
+      workflow_path = "test/fixtures/dummy_gem/.github/workflows/cibuildgem.yaml"
+      expected_workflow = File.read("test/fixtures/expected_github_workflow_container_image.yml")
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        capture_subprocess_io do
+          CLI.start(["ci_template", "--linux-container-image", "ghcr.io/example/custom-image:latest"])
+        end
+      end
+
+      assert(File.exist?(workflow_path))
+      assert_equal(expected_workflow, File.read(workflow_path))
+    ensure
+      FileUtils.rm_rf("test/fixtures/dummy_gem/.github")
+    end
+
     def test_release_succeeds
       FileUtils.touch("tmp/foo.gem")
       FileUtils.touch("tmp/bar.gem")
