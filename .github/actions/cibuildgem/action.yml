@@ -28,7 +28,7 @@ runs:
       run: |-
         ${{ case(
           inputs.version != null, format('gem install cibuildgem -v {0}', inputs.version),
-          github.repository == 'Shopify/cibuildgem', 'rake install',
+          endsWith(github.repository, '/cibuildgem'), 'rake install',
           'gem install cibuildgem'
         ) }}
       working-directory: "${{ github.action_path }}"

@@ -30,7 +30,7 @@ module Cibuildgem
       install_step_run = step("Install cibuildgem").fetch("run")
 
       assert_includes(install_step_run, "inputs.version != null, format(")
-      assert_includes(install_step_run, "github.repository == 'Shopify/cibuildgem', 'rake install'")
+      assert_includes(install_step_run, "endsWith(github.repository, '/cibuildgem'), 'rake install'")
       assert_includes(install_step_run, "'gem install cibuildgem'")
     end
 
