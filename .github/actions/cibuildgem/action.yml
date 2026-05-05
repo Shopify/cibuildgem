@@ -47,6 +47,7 @@ runs:
       env:
         CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
         CIBUILDGEM_VERSION: "${{ inputs.version }}"
+        CIBUILDGEM_SOURCE_PATH: "${{ endsWith(github.repository, '/cibuildgem') && github.workspace || '' }}"
       run: cibuildgem container_package
     - name: Package
       if: "${{ inputs.step == 'compile' && runner.os != 'Linux' }}"
@@ -77,6 +78,7 @@ runs:
       env:
         CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
         CIBUILDGEM_VERSION: "${{ inputs.version }}"
+        CIBUILDGEM_SOURCE_PATH: "${{ endsWith(github.repository, '/cibuildgem') && github.workspace || '' }}"
         CIBUILDGEM_CONTAINER_COMMAND: |-
           cibuildgem copy_from_staging_to_lib
           ${{ inputs.test-command }}
@@ -109,6 +111,7 @@ runs:
       env:
         CIBUILDGEM_CONTAINER_IMAGE: "${{ inputs.linux-container-image }}"
         CIBUILDGEM_VERSION: "${{ inputs.version }}"
+        CIBUILDGEM_SOURCE_PATH: "${{ endsWith(github.repository, '/cibuildgem') && github.workspace || '' }}"
         CIBUILDGEM_CONTAINER_COMMAND: "gem install pkg/*.gem"
       run: cibuildgem container_exec
     - name: "Download all gems"

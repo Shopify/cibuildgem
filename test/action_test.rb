@@ -61,6 +61,11 @@ module Cibuildgem
           env.fetch("CIBUILDGEM_VERSION"),
           "#{name}: version must be plumbed through",
         )
+        assert_equal(
+          "${{ endsWith(github.repository, '/cibuildgem') && github.workspace || '' }}",
+          env.fetch("CIBUILDGEM_SOURCE_PATH"),
+          "#{name}: source path must be set so installed-gem CI can rebuild from checkout",
+        )
       end
     end
 

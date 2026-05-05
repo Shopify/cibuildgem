@@ -177,7 +177,10 @@ module Cibuildgem
     end
 
     def load_source_gemspec
-      gemspec = Gem::Specification.load(File.join(source_path, "cibuildgem.gemspec"))
+      # gemspec uses Dir[...] which evaluates against pwd, hence the chdir
+      gemspec = Dir.chdir(source_path) do
+        Gem::Specification.load(File.join(source_path, "cibuildgem.gemspec"))
+      end
       raise ContainerError, "Unable to load cibuildgem.gemspec from #{source_path}." unless gemspec
 
       gemspec

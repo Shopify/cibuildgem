@@ -84,6 +84,18 @@ module Cibuildgem
       end
     end
 
+    def test_load_source_gemspec_resolves_files_against_source_path_not_pwd
+      packager = ContainerPackager.new(working_directory: @fixture_path)
+
+      Dir.chdir(@fixture_path) do
+        gemspec = packager.send(:load_source_gemspec)
+
+        assert_equal("cibuildgem", gemspec.name)
+        assert_includes(gemspec.files, "lib/cibuildgem.rb")
+        refute(gemspec.files.any? { |f| f.start_with?("lib/date") }, "must not pick up files from the working_directory")
+      end
+    end
+
     def test_run_installs_the_requested_cibuildgem_version_and_skips_host_build
       ENV["CIBUILDGEM_VERSION"] = "9.9.9"
 
