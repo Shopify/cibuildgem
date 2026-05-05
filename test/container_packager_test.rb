@@ -41,7 +41,7 @@ module Cibuildgem
 
       mount_flag_index = options[:options].index("-v")
       assert(mount_flag_index, "expected a -v mount flag for the host-built gem")
-      assert_match(%r{:/opt/cibuildgem-source:ro\z}, options[:options][mount_flag_index + 1])
+      assert_match(%r{:/opt/cibuildgem-source:ro,z\z}, options[:options][mount_flag_index + 1])
 
       assert_includes(command, "gem install --no-document /opt/cibuildgem-source/cibuildgem-")
       refute_includes(command, "gem build cibuildgem.gemspec")

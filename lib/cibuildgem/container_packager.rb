@@ -60,7 +60,8 @@ module Cibuildgem
       docker_options = ["--rm", "-i"]
       docker_options << "-t" if $stdin.tty?
       if host_gem_path
-        docker_options.push("-v", "#{File.dirname(host_gem_path)}:#{CONTAINER_SOURCE_PATH}:ro")
+        # `:z` is needed for SELinux/podman; ignored elsewhere
+        docker_options.push("-v", "#{File.dirname(host_gem_path)}:#{CONTAINER_SOURCE_PATH}:ro,z")
       end
       options[:options] = docker_options
 
