@@ -79,6 +79,7 @@ jobs:
         uses: "./.github/actions/cibuildgem"
         with:
           step: "install"
+          working-directory: "test/fixtures/date"
 
   # Make sure the precompiled binary doesn't use glibc symbols newer than 2.17. See issue #37.
   glibc_compat:

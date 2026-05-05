@@ -72,6 +72,7 @@ jobs:
         uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
+          working-directory: "test/fixtures/date"
   release:
     environment: release
     permissions:

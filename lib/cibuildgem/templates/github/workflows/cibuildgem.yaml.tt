@@ -89,6 +89,9 @@ jobs:
         uses: "shopify/cibuildgem/.github/actions/cibuildgem@main"
         with:
           step: "install"
+          <%- if options['working-directory'] -%>
+          working-directory: "<%= options['working-directory'] %>"
+          <%- end -%>
           <%- if options['linux-container-image'] -%>
           linux-container-image: "<%= options['linux-container-image'] %>"
           <%- end -%>
