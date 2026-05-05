@@ -46,3 +46,23 @@ Here are some working examples on gem that have setup cibuildgem
 | Ruby 3.3| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 | Ruby 3.4| 🟢           | 🟢        | 🟢          | 🟢             | 🟢             |
 | Ruby 4.0| 🟢           | 🟢        | 🟠 (not tested)| 🟢             | 🟢             |
+
+## Linux containerized builds
+
+Linux compile, test-cross and install steps run in [`rake-compiler-dock`](https://github.com/rake-compiler/rake-compiler-dock) containers. Keeps glibc stable across `ubuntu-latest` upgrades.
+
+The default image is rake-compiler-dock's pick for your platform. To use a different one, pass `linux-container-image:` to the action or `--linux-container-image` to `cibuildgem ci_template`.
+
+### Reproducing the Linux flow locally
+
+Test the Linux build locally with Podman or Docker:
+
+```sh
+bundle exec exe/cibuildgem container_package --working-directory path/to/gem
+```
+
+`test/fixtures/dummy_gem` is the quickest test case. Override with `--container-image` or `CIBUILDGEM_CONTAINER_IMAGE`. Pin cibuildgem version with `CIBUILDGEM_VERSION`.
+
+### Linux musl / aarch64
+
+rake-compiler-dock has images for `x86_64-linux-gnu`, `x86_64-linux-musl`, `aarch64-linux-gnu`, `aarch64-linux-musl`. cibuildgem handles them transparently. The default matrix covers `ubuntu-22.04` (glibc) only. For musl: pass `--linux-container-image ghcr.io/rake-compiler/rake-compiler-dock-image:1.12.0-mri-x86_64-linux-musl` or add a matrix row manually.

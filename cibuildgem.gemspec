@@ -32,5 +32,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency("prism")
   spec.add_dependency("rake-compiler")
+  spec.add_dependency("rake-compiler-dock", "~> 1.12")
   spec.add_dependency("thor")
 end

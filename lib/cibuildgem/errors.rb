@@ -2,4 +2,5 @@
 
 module Cibuildgem
   GemspecError = Class.new(StandardError)
+  ContainerError = Class.new(StandardError)
 end

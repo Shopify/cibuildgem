@@ -79,6 +79,49 @@ jobs:
         uses: "./.github/actions/cibuildgem"
         with:
           step: "install"
+          working-directory: "test/fixtures/date"
+
+  # Make sure the precompiled binary doesn't use glibc symbols newer than 2.17. See issue #37.
+  glibc_compat:
+    timeout-minutes: 5
+    name: "Check glibc symbol versions on the precompiled date binary"
+    needs: compile
+    runs-on: "ubuntu-22.04"
+    env:
+      MAX_ALLOWED_GLIBC: "2.17"
+    steps:
+      - name: "Download the staged Linux artifacts"
+        uses: actions/download-artifact@v5
+        with:
+          name: "stage-Linux-X64"
+          path: "stage"
+      - name: "Inspect glibc symbol versions"
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          binaries=(stage/**/*.so)
+          if [ ${#binaries[@]} -eq 0 ]; then
+            echo "::error::No .so files found in the stage artifact"
+            exit 1
+          fi
+
+          fail=0
+          for binary in "${binaries[@]}"; do
+            echo "::group::$binary"
+            symbols_file="$binary.glibc.txt"
+            objdump -T "$binary" | awk '/GLIBC_/{print $5}' | sort -u > "$symbols_file"
+            cat "$symbols_file"
+            while IFS= read -r ver; do
+              ver_num=${ver#GLIBC_}
+              if [ "$(printf '%s\n%s\n' "$ver_num" "$MAX_ALLOWED_GLIBC" | sort -V | tail -n1)" != "$MAX_ALLOWED_GLIBC" ]; then
+                echo "::error file=$binary::References $ver, newer than allowed GLIBC_$MAX_ALLOWED_GLIBC"
+                fail=1
+              fi
+            done < "$symbols_file"
+            echo "::endgroup::"
+          done
+          exit $fail
   release:
     permissions:
       id-token: write

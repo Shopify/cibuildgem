@@ -51,6 +51,68 @@ module Cibuildgem
       run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
     end
 
+    desc "container_package", "Compile and package a Linux gem in a container."
+    long_desc <<~MSG
+      Build the gem inside a rake-compiler-dock Linux container.
+
+      Useful for testing the Linux build locally before pushing to CI. Works with Docker or Podman.
+    MSG
+    method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the current directory, specify where."
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. Defaults to the gemspec from the selected working directory."
+    method_option "container-image", type: "string", required: false, desc: "Override the Linux container image used for packaging."
+    def container_package
+      working_directory = options["working-directory"] || Dir.pwd
+      packager = ContainerPackager.new(
+        working_directory: working_directory,
+        gemspec: options["gemspec"],
+        container_image: options["container-image"],
+      )
+
+      packager.package
+    rescue GemspecError, ContainerError => e
+      report_error(e.message)
+    end
+
+    desc "container_exec", "Run a command in a Linux container."
+    long_desc <<~MSG
+      Execute a shell command inside rake-compiler-dock.
+
+      Used by the GitHub action for the cross-test and install steps, and also available
+      for custom workflows.
+
+      The command can be passed via --command or the CIBUILDGEM_CONTAINER_COMMAND environment
+      variable (one of the two is required).
+    MSG
+    method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the current directory, specify where."
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. Defaults to the gemspec from the selected working directory."
+    method_option "container-image", type: "string", required: false, desc: "Override the Linux container image used for packaging."
+    method_option "command", type: "string", required: false, desc: "The shell command to execute inside the container. Falls back to CIBUILDGEM_CONTAINER_COMMAND."
+    method_option "bundle-install", type: "boolean", required: false, default: false, desc: "Install bundle dependencies before executing the command."
+    def container_exec
+      working_directory = options["working-directory"] || Dir.pwd
+      command = options["command"] || ENV["CIBUILDGEM_CONTAINER_COMMAND"]
+
+      if command.nil? || command.strip.empty?
+        report_error(<<~MSG)
+          No container command was provided.
+          Pass one with --command "..." or set the CIBUILDGEM_CONTAINER_COMMAND environment variable.
+        MSG
+      end
+
+      packager = ContainerPackager.new(
+        working_directory: working_directory,
+        gemspec: options["gemspec"],
+        container_image: options["container-image"],
+      )
+
+      packager.run(
+        command: command,
+        prepare_bundle: options["bundle-install"],
+      )
+    rescue GemspecError, ContainerError => e
+      report_error(e.message)
+    end
+
     desc "test", "Run the test suites of the target gem"
     long_desc <<~EOM
       cibuildgem will run the test suite of the gem. It either expects a `spec` or `test` task defined.
@@ -95,6 +157,7 @@ module Cibuildgem
     MSG
     method_option "working-directory", type: "string", required: false, desc: "If your gem lives outside of the repository root, specify where."
     method_option "test-command", type: "string", required: false, desc: "The test command to run. Defaults to running `bundle exec rake test` and `bundle exec rake spec`."
+    method_option "linux-container-image", type: "string", required: false, desc: "Override the rake-compiler-dock image used for the Linux containerized steps."
     def ci_template
       ruby_requirements = compilation_task.gemspec.required_ruby_version
       # os = ["macos-latest", "macos-15-intel", "ubuntu-latest", "windows-latest"]
@@ -160,7 +223,14 @@ module Cibuildgem
     def compilation_task
       @compilation_task ||= CompilationTasks.new(false)
     rescue GemspecError => e
-      print(e.message)
+      report_error(e.message)
+    end
+
+    # Errors go to stderr (separable from real output in CI logs)
+    # and always end with a newline.
+    def report_error(message)
+      message = "#{message}\n" unless message.end_with?("\n")
+      $stderr.write(message)
 
       Kernel.exit(false)
     end
