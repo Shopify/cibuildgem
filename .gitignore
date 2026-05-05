@@ -6,3 +6,6 @@
 /pkg/
 /spec/reports/
 /.github/actions/cibuildgem/node_modules
+test/fixtures/**/*.so
+test/fixtures/**/*.bundle
+test/fixtures/**/*.dylib
