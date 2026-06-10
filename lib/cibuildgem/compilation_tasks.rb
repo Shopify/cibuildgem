@@ -25,11 +25,13 @@ module Cibuildgem
       setup_packaging if create_packaging_task
     end
 
-    def ruby_cc_version
+    def ruby_versions
       required_ruby_version = @gemspec.required_ruby_version
-      selected_rubies = RubySeries.versions_to_compile_against(required_ruby_version)
+      RubySeries.versions_to_compile_against(required_ruby_version)
+    end
 
-      selected_rubies.map(&:to_s).join(":")
+    def ruby_cc_version
+      ruby_versions.map(&:to_s).join(":")
     end
 
     def normalized_platform

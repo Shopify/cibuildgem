@@ -9,6 +9,10 @@ inputs:
   step:
     description: "The step to run"
     required: true
+  package-mode:
+    description: "Which package mode to use: fat or skinny"
+    required: false
+    default: "fat"
   test-command:
     description: "The command to run the test suite. By default cibuildgem will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
     required: false
@@ -41,7 +45,12 @@ runs:
       if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: cibuildgem package
+      run: |
+        if [ "${{ inputs.package-mode }}" = "skinny" ]; then
+          cibuildgem skinny_package
+        else
+          cibuildgem package
+        fi
     - name: Upload artifacts
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/upload-artifact@v4

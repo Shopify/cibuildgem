@@ -51,6 +51,17 @@ module Cibuildgem
       run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
     end
 
+    desc "skinny_package", "Compile and package one gem per supported Ruby version.", hide: true
+    method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. Defaults to the gemspec from the current working directory."
+    def skinny_package
+      compilation_task.ruby_versions.each do |ruby_version|
+        ENV["RUBY_CC_VERSION"] = ruby_version.to_s
+
+        run_rake_tasks!("cibuildgem:setup", :clean)
+        run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
+      end
+    end
+
     desc "test", "Run the test suites of the target gem"
     long_desc <<~EOM
       cibuildgem will run the test suite of the gem. It either expects a `spec` or `test` task defined.
