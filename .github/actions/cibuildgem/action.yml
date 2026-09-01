@@ -9,6 +9,10 @@ inputs:
   step:
     description: "The step to run"
     required: true
+  include-single-abi:
+    description: "Whether to also compile a set of single-ABI gems."
+    required: false
+    default: false
   test-command:
     description: "The command to run the test suite. By default cibuildgem will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
     required: false
@@ -41,7 +45,7 @@ runs:
       if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: cibuildgem package
+      run: cibuildgem package --include-single-abi "${{ inputs.include-single-abi }}"
     - name: Upload artifacts
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/upload-artifact@v4

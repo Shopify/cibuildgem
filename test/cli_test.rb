@@ -303,6 +303,72 @@ module Cibuildgem
       assert_predicate($CHILD_STATUS, :success?)
     end
 
+    def test_package_single_abi_runs_rake_tasks_for_each_ruby_version
+      cli = CLI.new([], { "include-single-abi" => true })
+      compilation_task = Struct.new(:ruby_cc_version, :ruby_versions).new("3.3.8:3.2.8", [
+        Gem::Version.new("3.3.8"),
+        Gem::Version.new("3.2.8"),
+      ])
+      rake_calls = []
+      run_rake_tasks = proc do |*tasks|
+        rake_calls << [ENV.fetch("RUBY_CC_VERSION"), tasks]
+      end
+
+      cli.stub(:compilation_task, compilation_task) do
+        cli.stub(:run_rake_tasks!, run_rake_tasks) do
+          cli.package
+        end
+      end
+
+      expected_tasks = ["cibuildgem:setup", :cross, :native, :gem]
+      assert_equal(
+        [
+          ["3.3.8:3.2.8", expected_tasks],
+          ["3.3.8", expected_tasks],
+          ["3.2.8", expected_tasks],
+        ],
+        rake_calls,
+      )
+    end
+
+    def test_package_defaults_to_multi_abi
+      cli = CLI.new
+      compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
+      rake_calls = []
+      run_rake_tasks = proc do |*tasks|
+        rake_calls << [ENV.fetch("RUBY_CC_VERSION"), tasks]
+      end
+
+      cli.stub(:compilation_task, compilation_task) do
+        cli.stub(:run_rake_tasks!, run_rake_tasks) do
+          cli.package
+        end
+      end
+
+      assert_equal(
+        [["3.3.8:3.2.8", ["cibuildgem:setup", :cross, :native, :gem]]],
+        rake_calls,
+      )
+    end
+
+    def test_package_multi_abi_preserves_ruby_cc_version_from_environment
+      ENV["RUBY_CC_VERSION"] = "3.1.6"
+      cli = CLI.new
+      compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
+      ruby_cc_versions_used = []
+      run_rake_tasks = proc do |*|
+        ruby_cc_versions_used << ENV.fetch("RUBY_CC_VERSION")
+      end
+
+      cli.stub(:compilation_task, compilation_task) do
+        cli.stub(:run_rake_tasks!, run_rake_tasks) do
+          cli.package
+        end
+      end
+
+      assert_equal(["3.1.6"], ruby_cc_versions_used)
+    end
+
     def test_keep_the_extension_task_config_defined_by_the_gem
       Dir.chdir("test/fixtures/with_configured_ext") do
         cli = CLI.new
