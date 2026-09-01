@@ -22,6 +22,7 @@ jobs:
         with:
           step: "compile"
           working-directory: "test/fixtures/dummy_gem"
+          include-single-abi: true
   test:
     timeout-minutes: 20
     name: "Run the test suite"
@@ -46,6 +47,7 @@ jobs:
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/dummy_gem"
+          include-single-abi: true
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"
