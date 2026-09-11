@@ -32,7 +32,7 @@ module Cibuildgem
       run_rake_tasks!("cibuildgem:setup", :compile)
     end
 
-    desc "package", "Compile and package a 'fat gem'.", hide: true
+    desc "package", "Compile and package a 'multi-ABI gem'.", hide: true
     long_desc <<~MSG
       This command should normally run on CI, using the cibuildgem workflow. It will not work locally unless
       the environment is properly setup.
@@ -42,13 +42,20 @@ module Cibuildgem
       - A gem without precompiled binary (Ruby platform).
 
       The gem with precompiled binaries will be packaged with multiple binaries compatible for different
-      Ruby ABI (depending on what Ruby version the gem supports).
+      Ruby ABI (depending on what Ruby version the gem supports). If `--include-single-abi` is passed,
+      cibuildgem will also compile a set of single-ABI gems per Ruby version supported by the gem.
     MSG
     method_option "gemspec", type: "string", required: false, desc: "The gemspec to use. Defaults to the gemspec from the current working directory."
+    method_option "include-single-abi", type: :boolean, required: false, default: false, desc: "Whether to also compile a set of single-ABI gems. Defaults to false."
     def package
       ENV["RUBY_CC_VERSION"] ||= compilation_task.ruby_cc_version
-
       run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
+      if options["include-single-abi"] == true
+        compilation_task.ruby_versions.each do |ruby_version|
+          ENV["RUBY_CC_VERSION"] = ruby_version.to_s
+          run_rake_tasks!("cibuildgem:setup", :cross, :native, :gem)
+        end
+      end
     end
 
     desc "test", "Run the test suites of the target gem"
