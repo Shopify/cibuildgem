@@ -11,6 +11,10 @@ module Cibuildgem
 
     source_root(File.expand_path("templates", __dir__))
 
+    # RubyGems already restricts a gem's name, version and platform to these characters, so every filename
+    # `cibuildgem package` can legitimately produce matches. Anything else was not produced by the package task.
+    RELEASABLE_GEM_FILENAME = /\A[A-Za-z0-9._-]+\.gem\z/
+
     class << self
       def exit_on_failure?
         true
@@ -113,6 +117,8 @@ module Cibuildgem
         pathname = Pathname(file)
         next if pathname.directory? || pathname.extname != ".gem"
 
+        verify_releasable_filename!(pathname)
+
         out, status = Open3.capture2e("gem", "push", file)
         next if status.success?
 
@@ -138,6 +144,19 @@ module Cibuildgem
     end
 
     private
+
+    def verify_releasable_filename!(pathname)
+      basename = pathname.basename.to_s
+      return if RELEASABLE_GEM_FILENAME.match?(basename)
+
+      raise(<<~MSG)
+        Refusing to publish #{basename.inspect}.
+
+        A gem filename may only contain letters, digits, dots, dashes and underscores, so this file was not
+        produced by `cibuildgem package`. Artifacts reach the release job from the compile job, which runs
+        without publishing credentials, so an unexpected filename is treated as tampering rather than a gem.
+      MSG
+    end
 
     def run_rake_tasks!(*tasks)
       rakelibdir = [File.expand_path("tasks", __dir__), "rakelib"].join(File::PATH_SEPARATOR)

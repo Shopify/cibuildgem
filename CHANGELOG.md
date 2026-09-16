@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts built in the unprivileged compile job, and interpolating them into a command string let shell syntax in a
   basename execute in the release job, after RubyGems credentials are configured. The filename is now passed as a
   single argv element.
+- `cibuildgem release` now refuses a `.gem` whose basename holds anything other than letters, digits, dots, dashes
+  and underscores, rather than publishing it. RubyGems restricts a gem's name, version and platform to those
+  characters, so every filename `cibuildgem package` produces is accepted and one that is not was planted by
+  something else running in the compile job.
 
 ## [0.3.0] - 2026-03-27
 

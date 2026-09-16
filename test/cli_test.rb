@@ -208,33 +208,28 @@ module Cibuildgem
       FileUtils.rm_rf("tmp/some_file")
     end
 
-    def test_release_does_not_let_the_shell_evaluate_a_gem_filename
-      original_path = ENV["PATH"]
+    def test_release_refuses_a_filename_that_is_not_a_plain_gem_name
+      with_fake_gem_executable do |argv_log|
+        FileUtils.touch("pkg/hello$(touch injected).gem")
 
-      Dir.mktmpdir do |dir|
-        argv_log = File.join(dir, "argv")
-        fake_bin = File.join(dir, "bin")
-        FileUtils.mkdir_p(fake_bin)
-        File.write(File.join(fake_bin, "gem"), <<~SH)
-          #!/bin/sh
-          printf '%s\\n' "$@" > #{argv_log}
-        SH
-        FileUtils.chmod(0o755, File.join(fake_bin, "gem"))
-        ENV["PATH"] = [fake_bin, original_path].join(File::PATH_SEPARATOR)
-
-        Dir.chdir(dir) do
-          FileUtils.mkdir_p("pkg")
-          FileUtils.touch("pkg/hello$(touch injected).gem")
-
+        error = assert_raises(RuntimeError) do
           CLI.start(["release", "--glob", "pkg/*"])
-
-          refute(File.exist?("injected"), "the filename was evaluated by a shell")
         end
 
-        assert_equal(["push", "pkg/hello$(touch injected).gem"], File.readlines(argv_log, chomp: true))
+        assert_match("hello$(touch injected).gem", error.message)
+        refute(File.exist?("injected"), "the filename was evaluated by a shell")
+        refute(File.exist?(argv_log), "the file was handed to `gem push` instead of being refused")
       end
-    ensure
-      ENV["PATH"] = original_path
+    end
+
+    def test_release_pushes_a_plain_gem_name_without_a_shell
+      with_fake_gem_executable do |argv_log|
+        FileUtils.touch("pkg/hello_world-1.2.3-x86_64-linux.gem")
+
+        CLI.start(["release", "--glob", "pkg/*"])
+
+        assert_equal(["push", "pkg/hello_world-1.2.3-x86_64-linux.gem"], File.readlines(argv_log, chomp: true))
+      end
     end
 
     def test_print_ruby_cc_version
@@ -366,6 +361,34 @@ module Cibuildgem
     end
 
     private
+
+    # Runs the block in a scratch directory holding an empty `pkg/`, with a `gem` on PATH that records its
+    # arguments in the file whose path is yielded. Nothing is stubbed, so the release path resolves and
+    # executes a real subprocess the way it does on a release runner.
+    def with_fake_gem_executable(&block)
+      original_path = ENV["PATH"]
+
+      Dir.mktmpdir do |dir|
+        argv_log = File.join(dir, "argv")
+        fake_bin = File.join(dir, "bin")
+
+        FileUtils.mkdir_p(fake_bin)
+        File.write(File.join(fake_bin, "gem"), <<~SH)
+          #!/bin/sh
+          printf '%s\\n' "$@" > #{argv_log}
+        SH
+        FileUtils.chmod(0o755, File.join(fake_bin, "gem"))
+        ENV["PATH"] = [fake_bin, original_path].join(File::PATH_SEPARATOR)
+
+        Dir.chdir(dir) do
+          FileUtils.mkdir_p("pkg")
+
+          block.call(argv_log)
+        end
+      end
+    ensure
+      ENV["PATH"] = original_path
+    end
 
     def raise_instead_of_exit(&block)
       Kernel.stub(:exit, ->(_) { raise }) do
