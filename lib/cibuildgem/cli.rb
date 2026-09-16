@@ -140,7 +140,6 @@ module Cibuildgem
     private
 
     def run_rake_tasks!(*tasks)
-      all_tasks = tasks.join(" ")
       rakelibdir = [File.expand_path("tasks", __dir__), "rakelib"].join(File::PATH_SEPARATOR)
       rake_compiler_path = Gem.loaded_specs["rake-compiler"].full_require_paths
       rake_specs = Gem.loaded_specs["rake"]
@@ -152,7 +151,14 @@ module Cibuildgem
 
       system(
         { "RUBYLIB" => load_paths },
-        "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir} -r #{patch}",
+        "bundle",
+        "exec",
+        RbConfig.ruby,
+        rake_executable,
+        *tasks.map(&:to_s),
+        "-R#{rakelibdir}",
+        "-r",
+        patch,
         exception: true,
       )
     end

@@ -345,6 +345,26 @@ module Cibuildgem
       end
     end
 
+    def test_run_rake_tasks_builds_an_argv_list_rather_than_a_command_string
+      cli = CLI.new
+      command = nil
+      recorder = ->(*args, **_kwargs) do
+        command = args
+
+        true
+      end
+
+      cli.stub(:system, recorder) do
+        cli.send(:run_rake_tasks!, "cibuildgem:setup", :compile)
+      end
+
+      _env, *argv = command
+
+      assert_equal(["bundle", "exec"], argv.first(2))
+      assert_includes(argv, "cibuildgem:setup")
+      assert_includes(argv, "compile")
+    end
+
     private
 
     def raise_instead_of_exit(&block)
