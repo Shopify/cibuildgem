@@ -113,7 +113,7 @@ module Cibuildgem
         pathname = Pathname(file)
         next if pathname.directory? || pathname.extname != ".gem"
 
-        out, status = Open3.capture2e("gem push #{file}")
+        out, status = Open3.capture2e("gem", "push", file)
         next if status.success?
 
         if out =~ /Repushing of gem versions is not allowed/

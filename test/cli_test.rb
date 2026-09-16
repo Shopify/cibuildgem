@@ -3,6 +3,7 @@
 require "test_helper"
 require "English"
 require "open3"
+require "tmpdir"
 
 module Cibuildgem
   class CLITest < Minitest::Test
@@ -137,8 +138,8 @@ module Cibuildgem
 
       status = Struct.new(:success?)
       gem_pushed = []
-      callable = proc do |gem_name|
-        gem_pushed << gem_name
+      callable = proc do |*command|
+        gem_pushed << command
 
         ["", status.new(true)]
       end
@@ -147,7 +148,7 @@ module Cibuildgem
         CLI.start(["release", "--glob", "tmp/*"])
       end
 
-      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+      assert_equal([["gem", "push", "tmp/bar.gem"], ["gem", "push", "tmp/foo.gem"]], gem_pushed.sort)
     ensure
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
@@ -161,10 +162,10 @@ module Cibuildgem
 
       status = Struct.new(:success?)
       gem_pushed = []
-      callable = proc do |gem_name|
-        gem_pushed << gem_name
+      callable = proc do |*command|
+        gem_pushed << command
 
-        if gem_name == "gem push tmp/bar.gem"
+        if command == ["gem", "push", "tmp/bar.gem"]
           ["Repushing of gem versions is not allowed", status.new(false)]
         else
           ["", status.new(true)]
@@ -179,7 +180,7 @@ module Cibuildgem
         assert_equal("Gem tmp/bar.gem already exists on RubyGems.org, skipping...\n", out)
       end
 
-      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+      assert_equal([["gem", "push", "tmp/bar.gem"], ["gem", "push", "tmp/foo.gem"]], gem_pushed.sort)
     ensure
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
@@ -205,6 +206,35 @@ module Cibuildgem
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
       FileUtils.rm_rf("tmp/some_file")
+    end
+
+    def test_release_does_not_let_the_shell_evaluate_a_gem_filename
+      original_path = ENV["PATH"]
+
+      Dir.mktmpdir do |dir|
+        argv_log = File.join(dir, "argv")
+        fake_bin = File.join(dir, "bin")
+        FileUtils.mkdir_p(fake_bin)
+        File.write(File.join(fake_bin, "gem"), <<~SH)
+          #!/bin/sh
+          printf '%s\\n' "$@" > #{argv_log}
+        SH
+        FileUtils.chmod(0o755, File.join(fake_bin, "gem"))
+        ENV["PATH"] = [fake_bin, original_path].join(File::PATH_SEPARATOR)
+
+        Dir.chdir(dir) do
+          FileUtils.mkdir_p("pkg")
+          FileUtils.touch("pkg/hello$(touch injected).gem")
+
+          CLI.start(["release", "--glob", "pkg/*"])
+
+          refute(File.exist?("injected"), "the filename was evaluated by a shell")
+        end
+
+        assert_equal(["push", "pkg/hello$(touch injected).gem"], File.readlines(argv_log, chomp: true))
+      end
+    ensure
+      ENV["PATH"] = original_path
     end
 
     def test_print_ruby_cc_version

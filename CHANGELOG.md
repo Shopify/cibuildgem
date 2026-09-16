@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- `cibuildgem release` no longer runs `gem push` through a shell. The `.gem` filenames it iterates over come from
+  artifacts built in the unprivileged compile job, and interpolating them into a command string let shell syntax in a
+  basename execute in the release job, after RubyGems credentials are configured. The filename is now passed as a
+  single argv element.
+
 ## [0.3.0] - 2026-03-27
 
 ### Added
