@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and underscores, rather than publishing it. RubyGems restricts a gem's name, version and platform to those
   characters, so every filename `cibuildgem package` produces is accepted and one that is not was planted by
   something else running in the compile job.
+- The action's `version` input is now passed to `gem install` through the step environment instead of being
+  interpolated into the shell script. A workflow that wired the input to a value it did not control turned a version
+  selector into arbitrary commands running in the job; the value now reaches `gem install` as a single argument and
+  RubyGems rejects it if it is not a version.
 
 ## [0.3.0] - 2026-03-27
 
