@@ -25,11 +25,13 @@ module Cibuildgem
       setup_packaging if create_packaging_task
     end
 
-    def ruby_cc_version
+    def ruby_versions
       required_ruby_version = @gemspec.required_ruby_version
-      selected_rubies = RubySeries.versions_to_compile_against(required_ruby_version)
+      RubySeries.versions_to_compile_against(required_ruby_version)
+    end
 
-      selected_rubies.map(&:to_s).join(":")
+    def ruby_cc_version
+      ruby_versions.map(&:to_s).join(":")
     end
 
     def normalized_platform
@@ -45,6 +47,9 @@ module Cibuildgem
     private
 
     def setup_packaging
+      # Creates a Gem::PackageTask for the ordinary Ruby gem.
+      # Elsewhere in rake-compiler we also create one for the compiled gem.
+      # Internally in PackageTask, we define the :gem rake task which calls Gem::Package.build.
       Gem::PackageTask.new(gemspec) do |pkg|
         pkg.need_zip = true
         pkg.need_tar = true

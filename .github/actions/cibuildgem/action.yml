@@ -9,6 +9,10 @@ inputs:
   step:
     description: "The step to run"
     required: true
+  include-single-abi:
+    description: "Whether to also compile a set of single-ABI gems."
+    required: false
+    default: false
   test-command:
     description: "The command to run the test suite. By default cibuildgem will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
     required: false
@@ -41,7 +45,7 @@ runs:
       if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: cibuildgem package
+      run: cibuildgem package --include-single-abi "${{ inputs.include-single-abi }}"
     - name: Upload artifacts
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/upload-artifact@v4
@@ -50,7 +54,7 @@ runs:
         path: |
           ${{ inputs.working-directory }}/tmp/**/*.so
           ${{ inputs.working-directory }}/tmp/**/*.bundle
-          ${{ inputs.working-directory }}/pkg/*.gem
+          ${{ inputs.working-directory }}/pkg/**/*.gem
         if-no-files-found: error
         retention-days: 1
     - name: "Download compiled binaries"
@@ -59,6 +63,18 @@ runs:
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
         path: "${{ inputs.working-directory }}"
+    - name: "Install single-ABI gem"
+      if: "${{ inputs.step == 'test_cross' && inputs.include-single-abi == 'true' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        ruby_abi="$(ruby -e 'print RUBY_VERSION.split(".").first(2).join(".")')"
+        single_abi_gems=(pkg/"${ruby_abi}"/*.gem)
+        if [[ ! -e "${single_abi_gems[0]}" ]]; then
+          echo "No single-ABI gem found for Ruby ${ruby_abi}" >&2
+          exit 1
+        fi
+        gem install "${single_abi_gems[@]}"
     - name: "Copy staging binary to the libdir"
       if: "${{ inputs.step == 'test_cross' }}"
       working-directory: ${{ inputs.working-directory }}
@@ -94,8 +110,8 @@ runs:
     - name: "Push the gems to RubyGems"
       if: "${{ inputs.step == 'release' }}"
       shell: bash
-      run: cibuildgem release --glob "pkg/*"
+      run: cibuildgem release --glob "pkg/**/*.gem"
     - name: "Waiting for RubyGems to fully index the new gems"
       if: "${{ inputs.step == 'release' }}"
       shell: bash
-      run: gem exec rubygems-await pkg/*.gem
+      run: find pkg -type f -name '*.gem' -exec gem exec rubygems-await {} +
