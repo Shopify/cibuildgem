@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in cibuildgem.gemspec
+# Specify your gem's dependencies in cibuildgem.gemspec test
 gemspec
 
 gem "rake", "~> 13.0"
