@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- `cibuildgem release` no longer runs `gem push` through a shell. The `.gem` filenames it iterates over come from
+  artifacts built in the unprivileged compile job, and interpolating them into a command string let shell syntax in a
+  basename execute in the release job, after RubyGems credentials are configured. The filename is now passed as a
+  single argv element.
+- `cibuildgem release` now refuses a `.gem` whose basename holds anything other than letters, digits, dots, dashes
+  and underscores, rather than publishing it. RubyGems restricts a gem's name, version and platform to those
+  characters, so every filename `cibuildgem package` produces is accepted and one that is not was planted by
+  something else running in the compile job.
+- The action's `version` input is now passed to `gem install` through the step environment instead of being
+  interpolated into the shell script. A workflow that wired the input to a value it did not control turned a version
+  selector into arbitrary commands running in the job; the value now reaches `gem install` as a single argument and
+  RubyGems rejects it if it is not a version.
+
 ## [0.3.0] - 2026-03-27
 
 ### Added

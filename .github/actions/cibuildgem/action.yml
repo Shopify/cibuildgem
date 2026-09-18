@@ -22,21 +22,28 @@ runs:
   steps:
     - name: Install cibuildgem
       shell: bash
+      env:
+        CIBUILDGEM_VERSION: "${{ inputs.version }}"
       run: |-
         ${{ case(
           github.repository == 'Shopify/cibuildgem', 'rake install',
-          inputs.version != null, format('gem install cibuildgem -v {0}', inputs.version),
+          inputs.version != null, 'gem install cibuildgem -v "$CIBUILDGEM_VERSION"',
           'gem install cibuildgem'
         ) }}
       working-directory: "${{ github.action_path }}"
     - name: "Setup Rake Compiler"
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/github-script@v8
+      env:
+        # Passed through the environment rather than interpolated into the script
+        # below: a value containing a quote would otherwise close the string
+        # literal and the remainder would be evaluated as JavaScript.
+        WORKING_DIRECTORY: "${{ inputs.working-directory }}"
       with:
         script: |
           const url = new URL(`file:///${process.env.GITHUB_ACTION_PATH}/dist/index.js`);
           const { run } = await import(url.href)
-          await run('${{ inputs.working-directory }}')
+          await run(process.env.WORKING_DIRECTORY)
     - name: Package
       if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}

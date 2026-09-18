@@ -11,6 +11,10 @@ module Cibuildgem
 
     source_root(File.expand_path("templates", __dir__))
 
+    # RubyGems already restricts a gem's name, version and platform to these characters, so every filename
+    # `cibuildgem package` can legitimately produce matches. Anything else was not produced by the package task.
+    RELEASABLE_GEM_FILENAME = /\A[A-Za-z0-9._-]+\.gem\z/
+
     class << self
       def exit_on_failure?
         true
@@ -113,7 +117,9 @@ module Cibuildgem
         pathname = Pathname(file)
         next if pathname.directory? || pathname.extname != ".gem"
 
-        out, status = Open3.capture2e("gem push #{file}")
+        verify_releasable_filename!(pathname)
+
+        out, status = Open3.capture2e("gem", "push", file)
         next if status.success?
 
         if out =~ /Repushing of gem versions is not allowed/
@@ -139,8 +145,20 @@ module Cibuildgem
 
     private
 
+    def verify_releasable_filename!(pathname)
+      basename = pathname.basename.to_s
+      return if RELEASABLE_GEM_FILENAME.match?(basename)
+
+      raise(<<~MSG)
+        Refusing to publish #{basename.inspect}.
+
+        A gem filename may only contain letters, digits, dots, dashes and underscores, so this file was not
+        produced by `cibuildgem package`. Artifacts reach the release job from the compile job, which runs
+        without publishing credentials, so an unexpected filename is treated as tampering rather than a gem.
+      MSG
+    end
+
     def run_rake_tasks!(*tasks)
-      all_tasks = tasks.join(" ")
       rakelibdir = [File.expand_path("tasks", __dir__), "rakelib"].join(File::PATH_SEPARATOR)
       rake_compiler_path = Gem.loaded_specs["rake-compiler"].full_require_paths
       rake_specs = Gem.loaded_specs["rake"]
@@ -152,7 +170,14 @@ module Cibuildgem
 
       system(
         { "RUBYLIB" => load_paths },
-        "bundle exec #{RbConfig.ruby} #{rake_executable} #{all_tasks} -R#{rakelibdir} -r #{patch}",
+        "bundle",
+        "exec",
+        RbConfig.ruby,
+        rake_executable,
+        *tasks.map(&:to_s),
+        "-R#{rakelibdir}",
+        "-r",
+        patch,
         exception: true,
       )
     end

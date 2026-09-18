@@ -3,6 +3,7 @@
 require "test_helper"
 require "English"
 require "open3"
+require "tmpdir"
 
 module Cibuildgem
   class CLITest < Minitest::Test
@@ -137,8 +138,8 @@ module Cibuildgem
 
       status = Struct.new(:success?)
       gem_pushed = []
-      callable = proc do |gem_name|
-        gem_pushed << gem_name
+      callable = proc do |*command|
+        gem_pushed << command
 
         ["", status.new(true)]
       end
@@ -147,7 +148,7 @@ module Cibuildgem
         CLI.start(["release", "--glob", "tmp/*"])
       end
 
-      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+      assert_equal([["gem", "push", "tmp/bar.gem"], ["gem", "push", "tmp/foo.gem"]], gem_pushed.sort)
     ensure
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
@@ -161,10 +162,10 @@ module Cibuildgem
 
       status = Struct.new(:success?)
       gem_pushed = []
-      callable = proc do |gem_name|
-        gem_pushed << gem_name
+      callable = proc do |*command|
+        gem_pushed << command
 
-        if gem_name == "gem push tmp/bar.gem"
+        if command == ["gem", "push", "tmp/bar.gem"]
           ["Repushing of gem versions is not allowed", status.new(false)]
         else
           ["", status.new(true)]
@@ -179,7 +180,7 @@ module Cibuildgem
         assert_equal("Gem tmp/bar.gem already exists on RubyGems.org, skipping...\n", out)
       end
 
-      assert_equal(["gem push tmp/bar.gem", "gem push tmp/foo.gem"], gem_pushed.sort)
+      assert_equal([["gem", "push", "tmp/bar.gem"], ["gem", "push", "tmp/foo.gem"]], gem_pushed.sort)
     ensure
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
@@ -205,6 +206,30 @@ module Cibuildgem
       FileUtils.rm_rf("tmp/foo.gem")
       FileUtils.rm_rf("tmp/bar.gem")
       FileUtils.rm_rf("tmp/some_file")
+    end
+
+    def test_release_refuses_a_filename_that_is_not_a_plain_gem_name
+      with_fake_gem_executable do |argv_log|
+        FileUtils.touch("pkg/hello$(touch injected).gem")
+
+        error = assert_raises(RuntimeError) do
+          CLI.start(["release", "--glob", "pkg/*"])
+        end
+
+        assert_match("hello$(touch injected).gem", error.message)
+        refute(File.exist?("injected"), "the filename was evaluated by a shell")
+        refute(File.exist?(argv_log), "the file was handed to `gem push` instead of being refused")
+      end
+    end
+
+    def test_release_pushes_a_plain_gem_name_without_a_shell
+      with_fake_gem_executable do |argv_log|
+        FileUtils.touch("pkg/hello_world-1.2.3-x86_64-linux.gem")
+
+        CLI.start(["release", "--glob", "pkg/*"])
+
+        assert_equal(["push", "pkg/hello_world-1.2.3-x86_64-linux.gem"], File.readlines(argv_log, chomp: true))
+      end
     end
 
     def test_print_ruby_cc_version
@@ -315,7 +340,55 @@ module Cibuildgem
       end
     end
 
+    def test_run_rake_tasks_builds_an_argv_list_rather_than_a_command_string
+      cli = CLI.new
+      command = nil
+      recorder = ->(*args, **_kwargs) do
+        command = args
+
+        true
+      end
+
+      cli.stub(:system, recorder) do
+        cli.send(:run_rake_tasks!, "cibuildgem:setup", :compile)
+      end
+
+      _env, *argv = command
+
+      assert_equal(["bundle", "exec"], argv.first(2))
+      assert_includes(argv, "cibuildgem:setup")
+      assert_includes(argv, "compile")
+    end
+
     private
+
+    # Runs the block in a scratch directory holding an empty `pkg/`, with a `gem` on PATH that records its
+    # arguments in the file whose path is yielded. Nothing is stubbed, so the release path resolves and
+    # executes a real subprocess the way it does on a release runner.
+    def with_fake_gem_executable(&block)
+      original_path = ENV["PATH"]
+
+      Dir.mktmpdir do |dir|
+        argv_log = File.join(dir, "argv")
+        fake_bin = File.join(dir, "bin")
+
+        FileUtils.mkdir_p(fake_bin)
+        File.write(File.join(fake_bin, "gem"), <<~SH)
+          #!/bin/sh
+          printf '%s\\n' "$@" > #{argv_log}
+        SH
+        FileUtils.chmod(0o755, File.join(fake_bin, "gem"))
+        ENV["PATH"] = [fake_bin, original_path].join(File::PATH_SEPARATOR)
+
+        Dir.chdir(dir) do
+          FileUtils.mkdir_p("pkg")
+
+          block.call(argv_log)
+        end
+      end
+    ensure
+      ENV["PATH"] = original_path
+    end
 
     def raise_instead_of_exit(&block)
       Kernel.stub(:exit, ->(_) { raise }) do
