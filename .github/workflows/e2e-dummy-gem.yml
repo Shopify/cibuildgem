@@ -1,5 +1,7 @@
 name: "Run a end to end test on the dummy gem"
-on: push
+on:
+  push:
+  pull_request:
 jobs:
   compile:
     timeout-minutes: 20
