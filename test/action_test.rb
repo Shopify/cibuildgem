@@ -45,8 +45,11 @@ module Cibuildgem
 
         system(
           { "PATH" => "#{fake_gem_bin(dir, argv_log)}:#{ENV["PATH"]}", "CIBUILDGEM_VERSION" => hostile_version },
-          "bash", "-c", version_branch_script(hostile_version),
-          out: File::NULL, err: File::NULL,
+          "bash",
+          "-c",
+          version_branch_script(hostile_version),
+          out: File::NULL,
+          err: File::NULL,
         )
         refute_path_exists(marker, "the version input was evaluated as shell syntax instead of passed as data")
 
