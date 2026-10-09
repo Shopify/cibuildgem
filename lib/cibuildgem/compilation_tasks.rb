@@ -7,13 +7,20 @@ require_relative "create_makefile_finder"
 
 module Cibuildgem
   class CompilationTasks
-    attr_reader :gemspec, :native, :create_packaging_task, :extension_task
+    CONTENT_ADDRESSABLE_ENV = "CIBUILDGEM_CONTENT_ADDRESSABLE"
 
-    def initialize(create_packaging_task = false, gemspec = nil)
+    attr_reader :gemspec, :native, :create_packaging_task, :extension_task, :content_addressable
+
+    def initialize(
+      create_packaging_task = false,
+      gemspec = nil,
+      content_addressable: ENV[CONTENT_ADDRESSABLE_ENV] == "true"
+    )
       @gemspec = Bundler.load_gemspec(gemspec || find_gemspec)
       verify_gemspec!
 
       @create_packaging_task = create_packaging_task
+      @content_addressable = content_addressable
     end
 
     def setup
@@ -62,6 +69,14 @@ module Cibuildgem
       @extension_task.cross_platform = normalized_platform
       @extension_task.cross_compile = true
       @extension_task.no_native = true
+      if content_addressable
+        if @extension_task.respond_to?(:content_addressable=)
+          @extension_task.content_addressable = true
+        else
+          warn("WARNING: content-addressable packaging was requested, but rake-compiler does not support it. " \
+            "Upgrade rake-compiler to build single-ABI gems.")
+        end
+      end
 
       Rake::ExtensionTask.enable!
       @extension_task.define
