@@ -7,6 +7,8 @@ require "tmpdir"
 
 module Cibuildgem
   class CLITest < Minitest::Test
+    TEST_CONTENT_ADDRESSABLE_ENV = "CIBUILDGEM_CONTENT_ADDRESSABLE"
+
     def setup
       super
 
@@ -15,6 +17,7 @@ module Cibuildgem
 
     def teardown
       ENV.delete("RUBY_CC_VERSION")
+      ENV.delete(TEST_CONTENT_ADDRESSABLE_ENV)
 
       super
     end
@@ -326,6 +329,104 @@ module Cibuildgem
       end
 
       assert_predicate($CHILD_STATUS, :success?)
+    end
+
+    def test_package_sets_content_addressable_env_from_include_single_abi_option
+      test_cases = [
+        [{ "include-single-abi" => true }, nil, "3.3.8:3.2.8", "true"],
+        [{}, "3.1.6", "3.1.6", "false"],
+      ]
+
+      test_cases.each do |test_case|
+        options, existing_ruby_cc_version, expected_ruby_cc_version, expected_content_addressable = test_case
+        ENV["RUBY_CC_VERSION"] = existing_ruby_cc_version
+        cli = CLI.new([], options)
+        compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
+        rake_calls = []
+        run_rake_tasks = proc do |*tasks, env: {}|
+          rake_calls << [
+            ENV.fetch("RUBY_CC_VERSION"),
+            env.fetch(TEST_CONTENT_ADDRESSABLE_ENV),
+            tasks,
+          ]
+        end
+
+        cli.stub(:compilation_task, compilation_task) do
+          cli.stub(:run_rake_tasks!, run_rake_tasks) do
+            cli.package
+          end
+        end
+
+        assert_equal(
+          [[
+            expected_ruby_cc_version,
+            expected_content_addressable,
+            ["cibuildgem:setup", :cross, :native, :gem],
+          ]],
+          rake_calls,
+        )
+        assert_nil(ENV[TEST_CONTENT_ADDRESSABLE_ENV])
+      end
+    end
+
+    def test_compilation_task_enables_content_addressable_extension_task
+      require "cibuildgem/extension_patch"
+
+      extension_task = Class.new do
+        attr_accessor :config_script,
+          :content_addressable,
+          :cross_compile,
+          :cross_platform,
+          :ext_dir,
+          :gem_spec,
+          :lib_dir,
+          :name,
+          :no_native
+
+        def define; end
+      end.new
+      original_current = Rake::ExtensionTask.current
+
+      Dir.chdir("test/fixtures/dummy_gem") do
+        Rake::ExtensionTask.current = extension_task
+        CompilationTasks.new(false, nil, content_addressable: true).setup
+      end
+
+      assert_equal(true, extension_task.content_addressable)
+    ensure
+      Rake::ExtensionTask.current = original_current if Rake::ExtensionTask.respond_to?(:current=)
+      Rake::Task.clear
+    end
+
+    def test_compilation_task_warns_when_rake_compiler_does_not_support_content_addressable
+      require "cibuildgem/extension_patch"
+
+      extension_task = Class.new do
+        attr_accessor :config_script,
+          :cross_compile,
+          :cross_platform,
+          :ext_dir,
+          :gem_spec,
+          :lib_dir,
+          :name,
+          :no_native
+
+        def define; end
+      end.new
+      original_current = Rake::ExtensionTask.current
+
+      _, err = capture_io do
+        Dir.chdir("test/fixtures/dummy_gem") do
+          Rake::ExtensionTask.current = extension_task
+          CompilationTasks.new(false, nil, content_addressable: true).setup
+        end
+      end
+
+      assert_includes(err, "content-addressable packaging was requested")
+      assert_includes(err, "Upgrade rake-compiler")
+    ensure
+      Rake::ExtensionTask.current = original_current if Rake::ExtensionTask.respond_to?(:current=)
+      Rake::Task.clear
     end
 
     def test_keep_the_extension_task_config_defined_by_the_gem
