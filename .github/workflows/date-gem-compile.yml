@@ -28,14 +28,17 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
-          ruby-version: "3.1.7"
+          ruby-version: "3.4.7"
           bundler-cache: true
           working-directory: "test/fixtures/date"
+      - name: "Update RubyGems"
+        run: gem update --system 4.1.0.beta2 --prerelease
       - name: "Run cibuildgem"
         uses: "./.github/actions/cibuildgem"
         with:
           step: "compile"
           working-directory: "test/fixtures/date"
+          include-single-abi: true
   test:
     timeout-minutes: 30
     name: "Run the test suite"

@@ -331,54 +331,42 @@ module Cibuildgem
       assert_predicate($CHILD_STATUS, :success?)
     end
 
-    def test_package_single_abi_enables_content_addressable_packaging_for_one_rake_run
-      cli = CLI.new([], { "include-single-abi" => true })
-      compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
-      rake_calls = []
-      run_rake_tasks = proc do |*tasks, env: {}|
-        rake_calls << [
-          ENV.fetch("RUBY_CC_VERSION"),
-          env.fetch(TEST_CONTENT_ADDRESSABLE_ENV),
-          tasks,
-        ]
-      end
+    def test_package_sets_content_addressable_env_from_include_single_abi_option
+      test_cases = [
+        [{ "include-single-abi" => true }, nil, "3.3.8:3.2.8", "true"],
+        [{}, "3.1.6", "3.1.6", "false"],
+      ]
 
-      cli.stub(:compilation_task, compilation_task) do
-        cli.stub(:run_rake_tasks!, run_rake_tasks) do
-          cli.package
+      test_cases.each do |test_case|
+        options, existing_ruby_cc_version, expected_ruby_cc_version, expected_content_addressable = test_case
+        ENV["RUBY_CC_VERSION"] = existing_ruby_cc_version
+        cli = CLI.new([], options)
+        compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
+        rake_calls = []
+        run_rake_tasks = proc do |*tasks, env: {}|
+          rake_calls << [
+            ENV.fetch("RUBY_CC_VERSION"),
+            env.fetch(TEST_CONTENT_ADDRESSABLE_ENV),
+            tasks,
+          ]
         end
-      end
 
-      assert_equal(
-        [["3.3.8:3.2.8", "true", ["cibuildgem:setup", :cross, :native, :gem]]],
-        rake_calls,
-      )
-      assert_nil(ENV[TEST_CONTENT_ADDRESSABLE_ENV])
-    end
-
-    def test_package_defaults_to_multi_abi_and_preserves_ruby_cc_version_from_environment
-      ENV["RUBY_CC_VERSION"] = "3.1.6"
-      cli = CLI.new
-      compilation_task = Struct.new(:ruby_cc_version).new("3.3.8:3.2.8")
-      rake_calls = []
-      run_rake_tasks = proc do |*tasks, env: {}|
-        rake_calls << [
-          ENV.fetch("RUBY_CC_VERSION"),
-          env.fetch(TEST_CONTENT_ADDRESSABLE_ENV),
-          tasks,
-        ]
-      end
-
-      cli.stub(:compilation_task, compilation_task) do
-        cli.stub(:run_rake_tasks!, run_rake_tasks) do
-          cli.package
+        cli.stub(:compilation_task, compilation_task) do
+          cli.stub(:run_rake_tasks!, run_rake_tasks) do
+            cli.package
+          end
         end
-      end
 
-      assert_equal(
-        [["3.1.6", "false", ["cibuildgem:setup", :cross, :native, :gem]]],
-        rake_calls,
-      )
+        assert_equal(
+          [[
+            expected_ruby_cc_version,
+            expected_content_addressable,
+            ["cibuildgem:setup", :cross, :native, :gem],
+          ]],
+          rake_calls,
+        )
+        assert_nil(ENV[TEST_CONTENT_ADDRESSABLE_ENV])
+      end
     end
 
     def test_compilation_task_enables_content_addressable_extension_task

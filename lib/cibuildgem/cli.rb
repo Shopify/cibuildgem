@@ -58,7 +58,7 @@ module Cibuildgem
         :cross,
         :native,
         :gem,
-        env: { CompilationTasks::CONTENT_ADDRESSABLE_ENV => options["include-single-abi"] == true ? "true" : "false" },
+        env: { "CIBUILDGEM_CONTENT_ADDRESSABLE" => options["include-single-abi"] == true ? "true" : "false" },
       )
     end
 

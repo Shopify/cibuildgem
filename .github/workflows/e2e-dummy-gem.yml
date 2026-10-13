@@ -54,7 +54,7 @@ jobs:
         with:
           step: "test_${{ matrix.type }}"
           working-directory: "test/fixtures/dummy_gem"
-          include-single-abi: true
+          include-single-abi: ${{ matrix.rubies == '3.4' }}
   install:
     timeout-minutes: 5
     name: "Verify the gem can be installed"

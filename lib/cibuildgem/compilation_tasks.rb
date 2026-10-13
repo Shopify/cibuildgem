@@ -7,14 +7,12 @@ require_relative "create_makefile_finder"
 
 module Cibuildgem
   class CompilationTasks
-    CONTENT_ADDRESSABLE_ENV = "CIBUILDGEM_CONTENT_ADDRESSABLE"
-
     attr_reader :gemspec, :native, :create_packaging_task, :extension_task, :content_addressable
 
     def initialize(
       create_packaging_task = false,
       gemspec = nil,
-      content_addressable: ENV[CONTENT_ADDRESSABLE_ENV] == "true"
+      content_addressable: ENV["CIBUILDGEM_CONTENT_ADDRESSABLE"] == "true"
     )
       @gemspec = Bundler.load_gemspec(gemspec || find_gemspec)
       verify_gemspec!
@@ -73,8 +71,8 @@ module Cibuildgem
         if @extension_task.respond_to?(:content_addressable=)
           @extension_task.content_addressable = true
         else
-          warn("WARNING: content-addressable packaging was requested, but rake-compiler does not support it. " \
-            "Upgrade rake-compiler to build single-ABI gems.")
+          warn("WARNING: content-addressable packaging was requested, but rake-compiler #{rake_compiler_version} " \
+            "does not support it. Upgrade rake-compiler to >= 1.3.2 to build single-ABI gems.")
         end
       end
 
@@ -82,6 +80,10 @@ module Cibuildgem
       @extension_task.define
 
       disable_shared unless Gem.win_platform?
+    end
+
+    def rake_compiler_version
+      Gem.loaded_specs["rake-compiler"]&.version&.to_s || "unknown"
     end
 
     def binary_lib_dir(binary_name)
