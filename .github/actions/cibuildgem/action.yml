@@ -9,6 +9,10 @@ inputs:
   step:
     description: "The step to run"
     required: true
+  include-single-abi:
+    description: "Whether to also compile a set of single-ABI gems."
+    required: false
+    default: false
   test-command:
     description: "The command to run the test suite. By default cibuildgem will run either `bundle exec rake test` or `bundle exec rake spec` depending on the test framework used."
     required: false
@@ -48,7 +52,7 @@ runs:
       if: "${{ inputs.step == 'compile' }}"
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: cibuildgem package
+      run: cibuildgem package --include-single-abi "${{ inputs.include-single-abi }}"
     - name: Upload artifacts
       if: "${{ inputs.step == 'compile' }}"
       uses: actions/upload-artifact@v4
@@ -66,6 +70,27 @@ runs:
       with:
         name: "stage-${{ runner.os }}-${{ runner.arch }}"
         path: "${{ inputs.working-directory }}"
+    - name: "Install single-ABI gem"
+      if: "${{ inputs.step == 'test_cross' && inputs.include-single-abi == 'true' }}"
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        ruby <<'RUBY' > /tmp/single-abi-gems
+        require "rubygems/package"
+
+        ruby_abi = RUBY_VERSION.split(".").first(2).join(".")
+        expected_requirement = Gem::Requirement.new("~> #{ruby_abi}.0")
+        gems = Dir["pkg/*.gem"].select do |path|
+          spec = Gem::Package.new(path).spec
+          spec.platform != Gem::Platform::RUBY && spec.required_ruby_version == expected_requirement
+        end
+
+        abort "No single-ABI gem found for Ruby #{ruby_abi}" if gems.empty?
+
+        puts gems
+        RUBY
+
+        xargs gem install < /tmp/single-abi-gems
     - name: "Copy staging binary to the libdir"
       if: "${{ inputs.step == 'test_cross' }}"
       working-directory: ${{ inputs.working-directory }}
