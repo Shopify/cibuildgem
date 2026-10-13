@@ -16,9 +16,11 @@ jobs:
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71"
         with:
-          ruby-version: "3.1.7"
+          ruby-version: "3.4.7"
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
+      - name: "Update RubyGems"
+        run: gem update --system 4.1.0.beta2 --prerelease
       - name: "Run cibuildgem"
         uses: "./.github/actions/cibuildgem"
         with:
@@ -43,6 +45,9 @@ jobs:
           ruby-version: "${{ matrix.rubies }}"
           bundler-cache: true
           working-directory: "test/fixtures/dummy_gem"
+      - name: "Update RubyGems"
+        if: matrix.rubies == '3.4'
+        run: gem update --system 4.1.0.beta2 --prerelease
       - name: "Run cibuildgem"
         uses: "./.github/actions/cibuildgem"
         with:
