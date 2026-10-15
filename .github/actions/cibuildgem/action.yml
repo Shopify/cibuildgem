@@ -78,7 +78,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        ruby <<'RUBY' > /tmp/single-abi-gems
+        ruby <<'RUBY'
         require "rubygems/package"
 
         ruby_abi = RUBY_VERSION.split(".").first(2).join(".")
@@ -90,10 +90,10 @@ runs:
 
         abort "No single-ABI gem found for Ruby #{ruby_abi}" if gems.empty?
 
+        puts "Installing single-ABI gems:"
         puts gems
+        system Gem.ruby, "-S", "gem", "install", *gems, exception: true
         RUBY
-
-        xargs gem install < /tmp/single-abi-gems
     - name: "Copy staging binary to the libdir"
       if: "${{ inputs.step == 'test_cross' }}"
       working-directory: ${{ inputs.working-directory }}
@@ -123,7 +123,7 @@ runs:
       if: "${{ inputs.step == 'install' }}"
       shell: bash
       run: |
-        ruby <<'RUBY' | xargs gem install
+        ruby <<'RUBY'
         require "rubygems/package"
 
         content_addressed_gem = /-[0-9a-f]{8,64}\.gem\z/
@@ -139,7 +139,9 @@ runs:
 
         abort "No multi-ABI platform gem found" if multi_abi_gems.empty?
 
+        puts "Installing platform gems:"
         puts multi_abi_gems
+        system Gem.ruby, "-S", "gem", "install", *multi_abi_gems, exception: true
         RUBY
     - name: "Configure RubyGems crendentials in preparation for publishing"
       if: "${{ inputs.step == 'release' }}"
