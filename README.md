@@ -24,6 +24,44 @@ As noted by [@flavorjones](https://github.com/flavorjones), this toolchain works
 
 Head to the [documentation Wiki](https://github.com/Shopify/cibuildgem/wiki) to setup and configure cibuildgem for your gem.
 
+### Using preinstalled Ruby toolchains
+
+The compile step downloads its target Rubies by default. To use your own Ruby
+toolchain (for example, to build against musl on Alpine), install the target
+Rubies in the build environment and populate `~/.rake-compiler/config.yml`
+with their `rbconfig.rb` paths. Set `RUBY_CC_VERSION` to the colon-separated
+list of target Ruby versions if they differ from the default list. Each target
+Ruby and the build toolchain must use the intended libc.
+
+For an Alpine build job whose Rake Compiler config is already in place:
+
+```yaml
+- uses: Shopify/cibuildgem/.github/actions/cibuildgem@main
+  with:
+    step: compile
+    setup-rake-compiler: 'false'
+    artifact-name: stage-linux-x64-musl
+```
+
+Run the test and install jobs for that artifact in an environment that matches its
+target. When distributing separate Linux builds, use distinct `-linux-gnu`
+and `-linux-musl` gem platforms. See
+[rake-compiler-dock's Linux platform guidance](https://github.com/rake-compiler/rake-compiler-dock#linux-gnu-and-musl-important-details).
+
+Set `package-command` when a build must run in a separate environment, such as
+an Alpine container on a Linux GitHub runner. The command must create its gems
+in `pkg/` under `working-directory`. With `setup-rake-compiler: 'false'`, the
+command is responsible for configuring Rake Compiler in its build environment
+and for passing packaging options such as `--include-single-abi`.
+
+### Build artifact names
+
+The action names build artifacts `stage-<runner OS>-<runner architecture>` by
+default. When multiple builds share a runner OS and architecture, set
+`artifact-name` to a distinct name for each build. Pass the same name to its
+`compile`, `test_cross`, and `install` steps. The `release` step still
+downloads all build artifacts.
+
 ## Working examples
 
 Here are some working examples on gem that have setup cibuildgem
